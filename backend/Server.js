@@ -7,7 +7,7 @@ const swaggerUi = require('swagger-ui-express');
 const yaml = require('yamljs');
 const path = require('path');
 
-// Add this to handle BigInt serialization globally
+// Handle BigInt serialization globally
 BigInt.prototype.toJSON = function () { return this.toString(); };
 
 // Load configuration settings
@@ -29,52 +29,49 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
-// Enable CORS for all routes (for development only)
+// Enable CORS for all origins (portfolio PoC)
 app.use(cors());
 
 // Parse JSON request bodies
-app.use(express.json({ limit: '10kb' })); // Limit body size to prevent abuse
+app.use(express.json({ limit: '10kb' }));
 
-// Serve static files (like images or documents)
+// Serve static files
 app.use('/uploads', express.static('uploads'));
 
 // Load API documentation from swagger.yaml
 const swaggerDocument = yaml.load(path.join(__dirname, 'docs/swagger.yaml'));
-
-// Use Swagger UI for interactive API documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// Database connection setup
-config.connectToDatabase()
-  .catch((err) => {
-    console.error('Failed to connect to the database:', err);
-    process.exit(1);
-  });
-
-// Health check endpoint for Render and monitoring
+// Health check — always responds, reports DB connection state
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok', uptime: process.uptime(), timestamp: new Date().toISOString() });
+  const dbState = mongoose.connection.readyState;
+  const dbStatus = ['disconnected', 'connected', 'connecting', 'disconnecting'][dbState] || 'unknown';
+  res.status(200).json({
+    status: 'ok',
+    db: dbStatus,
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  });
 });
 
-
-// Define routes (import and mount them here)
+// Mount API routes
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
 const productRoutes = require('./routes/product.routes');
 const orderRoutes = require('./routes/order.routes');
 const supplierRoutes = require('./routes/supplier.routes');
-const blockchainRoutes = require('./routes/blockchain.routes'); // Import blockchain routes
-const walletRoutes = require('./routes/wallet.routes'); // Import wallet routes
+const blockchainRoutes = require('./routes/blockchain.routes');
+const walletRoutes = require('./routes/wallet.routes');
 
-// Use the routes with a base path (e.g., /api)
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/suppliers', supplierRoutes);
-app.use('/api/blockchain', blockchainRoutes); // Mount blockchain routes
-app.use('/api/wallet', walletRoutes); // Mount wallet routes
-// Error handling middleware (must be defined after routes)
+app.use('/api/blockchain', blockchainRoutes);
+app.use('/api/wallet', walletRoutes);
+
+// Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send({
@@ -83,8 +80,15 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start the server
+// Start HTTP server FIRST — Render health checks pass even during DB connect
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server running on port ${port}`);
+
+  // Connect to DB after server is listening (non-blocking startup)
+  config.connectToDatabase()
+    .catch((err) => {
+      // Don't exit — retry logic in database.js will reconnect
+      console.error('Initial DB connection failed, retrying in background:', err.message);
+    });
 });
