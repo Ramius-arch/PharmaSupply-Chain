@@ -7,9 +7,10 @@ services:
     rootDir: backend
     buildCommand: npm install
     startCommand: node Server.js
+    healthCheckPath: /health
     envVars:
       - key: MONGODB_URI
-        sync: false # User must provide this in Render dashboard
+        value: mongodb+srv://Qx_billing:root@cluster0.ta3f6uu.mongodb.net/pharmasupply?appName=Cluster0
       - key: JWT_SECRET
         generateValue: true
       - key: NODE_ENV

@@ -51,6 +51,12 @@ config.connectToDatabase()
     process.exit(1);
   });
 
+// Health check endpoint for Render and monitoring
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', uptime: process.uptime(), timestamp: new Date().toISOString() });
+});
+
+
 // Define routes (import and mount them here)
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
