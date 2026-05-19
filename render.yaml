@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: pharmasupply-backend
+    env: node
+    plan: free
+    region: oregon
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node Server.js
+    envVars:
+      - key: MONGODB_URI
+        sync: false # User must provide this in Render dashboard
+      - key: JWT_SECRET
+        generateValue: true
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: LOG_LEVEL
+        value: info
+
+  - type: web
+    name: pharmasupply-frontend
+    env: static
+    plan: free
+    region: oregon
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://pharmasupply-backend.onrender.com/api

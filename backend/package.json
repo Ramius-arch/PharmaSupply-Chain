@@ -1,0 +1,38 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Server.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "jest --forceExit --detectOpenHandles",
+    "start": "node Server.js",
+    "seed": "node seeders/seed.js",
+    "dev": "node Server.js"
+  },
+  "keywords": [],
+  "author": "Ramius_arch",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "ethers": "^6.16.0",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.2.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.0.2",
+    "pino": "^10.1.0",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^10.1.0",
+    "@shelf/jest-mongodb": "^6.0.2",
+    "jest": "^30.2.0"
+  }
+}
