@@ -101,8 +101,13 @@ const seedDB = async () => {
                 dosageForm: faker.helpers.arrayElement(['Tablet', 'Capsule', 'Syrup', 'Injection']),
                 strength: faker.number.int({ min: 1, max: 500 }) + 'mg',
                 pharmaceuticalCode: faker.string.alphanumeric(12).toUpperCase(),
-                image: `https://picsum.photos/seed/${faker.number.int({ min: 1, max: 1000 })}/400/300`, // Placeholder image for pharmaceutical products with a random seed
-                // Reminder: Replace with actual pharmaceutical ad product images with kodak film like feel with color bleeding
+                image: faker.helpers.arrayElement([
+                    'https://images.unsplash.com/photo-1587854692152-cbe660dbbb88?q=80&w=1000&auto=format&fit=crop', // Pills close up, warm
+                    'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=1000&auto=format&fit=crop', // Lab equipment, cinematic
+                    'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=1000&auto=format&fit=crop', // Medicine bottle, moody
+                    'https://images.unsplash.com/photo-1631549916768-4119b2e5f926?q=80&w=1000&auto=format&fit=crop', // Modern pharmacy, high contrast
+                    'https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?q=80&w=1000&auto=format&fit=crop', // Scientific research
+                ]),
             }));
         }
         await Product.insertMany(products);

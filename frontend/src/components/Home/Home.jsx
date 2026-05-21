@@ -2,19 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css';
 
-// Placeholder data for demonstration purposes
-const products = [
-  { id: 1, name: 'Product 1', price: 99.99, image: '/images/product1.jpg' },
-  { id: 2, name: 'Product 2', price: 49.99, image: '/images/product2.jpg' },
-  // ... more products
-];
-
-const categories = [
-  { id: 1, name: 'Electronics', image: '/images/electronics.jpg' },
-  { id: 2, name: 'Clothing', image: '/images/clothing.jpg' },
-  // ... more categories
-];
-
 const Home = () => {
   return (
     <div className="home-container">
@@ -22,11 +9,11 @@ const Home = () => {
       <section className="hero animate-fade-in">
         <div className="container">
           <div className="hero-content">
-            <h1>The Future of Pharma Traceability</h1>
-            <p>Secure, transparent, and decentralized supply chain management for the modern pharmaceutical industry.</p>
+            <h1>Deterministic Pharma Integrity</h1>
+            <p>Eliminate supply chain ambiguity with decentralized traceability. Secure, transparent, and built for high-stakes pharmaceutical logistics.</p>
             <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
-              <Link to="/products" className="btn btn-primary">Browse Catalog</Link>
-              <Link to="/admin" className="btn btn-outline">Admin Portal</Link>
+              <Link to="/products" className="btn btn-primary">Audit Catalog</Link>
+              <Link to="/admin" className="btn btn-outline">Control Center</Link>
             </div>
           </div>
         </div>
@@ -35,22 +22,22 @@ const Home = () => {
       {/* Categories Section */}
       <section className="categories">
         <div className="container">
-          <h2>Trust through Transparency</h2>
+          <h2>Transparency as a Standard</h2>
           <div className="category-grid">
             <div className="category-card">
               <div style={{ fontSize: '2rem', color: 'var(--primary)' }}>🛡️</div>
-              <h3>Immutable Records</h3>
-              <p style={{ color: 'var(--text-secondary)' }}>Every movement is logged on the blockchain, ensuring data integrity and authenticity.</p>
+              <h3>Immutable Ledger</h3>
+              <p style={{ color: 'var(--text-secondary)' }}>Zero-trust validation. Every batch movement is cryptographically signed and logged on-chain.</p>
             </div>
             <div className="category-card">
               <div style={{ fontSize: '2rem', color: 'var(--secondary)' }}>📦</div>
-              <h3>Real-time Tracking</h3>
-              <p style={{ color: 'var(--text-secondary)' }}>Monitor shipment status from manufacturing to final delivery with instant updates.</p>
+              <h3>Live Asset Tracking</h3>
+              <p style={{ color: 'var(--text-secondary)' }}>Sub-second updates. Monitor the lifecycle of critical assets from synthesis to delivery.</p>
             </div>
             <div className="category-card">
               <div style={{ fontSize: '2rem', color: 'var(--warning)' }}>⚡</div>
               <h3>Smart Logistics</h3>
-              <p style={{ color: 'var(--text-secondary)' }}>Automated status transitions and smart contract execution for efficient operations.</p>
+              <p style={{ color: 'var(--text-secondary)' }}>Automated compliance. Smart contracts enforce status transitions, reducing human intervention.</p>
             </div>
           </div>
         </div>
@@ -59,14 +46,18 @@ const Home = () => {
       {/* Featured Products Section */}
       <section className="featured-products">
         <div className="container">
-          <h2>Verified Pharmaceuticals</h2>
+          <h2>Verified Inventory</h2>
           <div className="product-grid">
-            {products.slice(0, 3).map((product) => (
+            {[
+                { id: 1, name: 'Adalimumab Batch 7', price: 125000, img: 'https://images.unsplash.com/photo-1587854692152-cbe660dbbb88?q=80&w=600&auto=format&fit=crop' },
+                { id: 2, name: 'Insulin Glargine R4', price: 45000, img: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=600&auto=format&fit=crop' },
+                { id: 3, name: 'Pembrolizumab S12', price: 89000, img: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=600&auto=format&fit=crop' }
+            ].map((product) => (
               <div key={product.id} className="product-card">
-                <img src={'https://picsum.photos/seed/' + product.id + '/400/300?grayscale'} alt={product.name} />
+                <img src={product.img} alt={product.name} />
                 <h3>{product.name}</h3>
-                <div className="price">${(product.price / 100).toFixed(2)}</div>
-                <Link to={`/products/${product.id}`} className="btn btn-outline" style={{ marginTop: '16px', width: '100%' }}>View Details</Link>
+                <div className="price">${(product.price / 100).toLocaleString()}</div>
+                <Link to={`/products/${product.id}`} className="btn btn-outline" style={{ marginTop: '16px', width: '100%' }}>Audit Details</Link>
               </div>
             ))}
           </div>

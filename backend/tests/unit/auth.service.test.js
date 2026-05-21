@@ -62,7 +62,7 @@ describe('Auth Service', () => {
                 toObject: jest.fn().mockReturnValue({}),
             }));
 
-            await expect(authService.registerUser(userData)).rejects.toThrow('Registration failed: Error: DB error');
+            await expect(authService.registerUser(userData)).rejects.toThrow('Registration failed: DB error');
         });
     });
 
@@ -98,7 +98,8 @@ describe('Auth Service', () => {
             expect(comparePassword).toHaveBeenCalledWith(credentials.password, userInDb.password);
             expect(jwt.sign).toHaveBeenCalledWith(
                 { userId: userInDb._id, role: userInDb.role },
-                process.env.JWT_SECRET // Use process.env directly
+                process.env.JWT_SECRET,
+                { expiresIn: '24h' }
             );
             expect(result).toEqual(expect.objectContaining({
                 email: userInDb.email,

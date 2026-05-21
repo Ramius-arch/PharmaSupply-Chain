@@ -10,7 +10,7 @@ services:
     healthCheckPath: /health
     envVars:
       - key: MONGODB_URI
-        value: mongodb+srv://Qx_billing:root@cluster0.ta3f6uu.mongodb.net/pharmasupply?appName=Cluster0
+        sync: false # Should be set in Render dashboard
       - key: JWT_SECRET
         generateValue: true
       - key: NODE_ENV
@@ -19,15 +19,20 @@ services:
         value: 3000
       - key: LOG_LEVEL
         value: info
+      - key: BLOCKCHAIN_RPC_URL
+        value: http://pharmasupply-hardhat:8545
+      - key: DEV_PRIVATE_KEY
+        value: "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
 
   - type: web
-    name: pharmasupply-frontend
-    env: static
+    name: pharmasupply-hardhat
+    env: node
     plan: free
     region: oregon
-    rootDir: frontend
-    buildCommand: npm install && npm run build
-    staticPublishPath: ./dist
+    rootDir: web3
+    buildCommand: npm install
+    startCommand: npx hardhat node --hostname 0.0.0.0
+    healthCheckPath: /
     envVars:
-      - key: VITE_API_URL
-        value: https://pharmasupply-backend.onrender.com/api
+      - key: PORT
+        value: 8545

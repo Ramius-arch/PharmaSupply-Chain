@@ -49,10 +49,10 @@ const ContractStatus = {
 };
 
 /**
- * @dev Initializes an Ethers.js provider to connect to the local Hardhat network.
- *      The Hardhat network typically runs on http://127.0.0.1:8545/.
+ * @dev Initializes an Ethers.js provider to connect to the blockchain network.
+ *      Defaults to local Hardhat network (http://127.0.0.1:8545).
  */
-const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+const provider = new ethers.JsonRpcProvider(process.env.BLOCKCHAIN_RPC_URL || "http://127.0.0.1:8545");
 
 /**
  * @dev Initializes an Ethers.js Wallet instance to sign transactions.
@@ -197,6 +197,17 @@ exports.getBlockchainTransactions = async () => {
     const createdEvents = await supplyChainContract.queryFilter(itemCreatedFilter, 0, 'latest');
     const updatedEvents = await supplyChainContract.queryFilter(itemStatusUpdatedFilter, 0, 'latest');
 
+    // Optimization: Collect all unique block numbers to fetch block data in parallel
+    const blockNumbers = [...new Set([
+      ...createdEvents.map(e => e.blockNumber),
+      ...updatedEvents.map(e => e.blockNumber)
+    ])];
+
+    const blockMap = {};
+    await Promise.all(blockNumbers.map(async (bn) => {
+      blockMap[bn] = await provider.getBlock(bn);
+    }));
+
     let transactions = [];
 
     // Process ItemCreated events
@@ -206,12 +217,12 @@ exports.getBlockchainTransactions = async () => {
         console.error('Error: Failed to parse ItemCreated event or event.args is undefined:', event);
         continue;
       }
-      const block = await provider.getBlock(event.blockNumber);
+      const block = blockMap[event.blockNumber];
       transactions.push(convertBigIntsToStrings({
         type: 'ItemCreated',
         transactionHash: event.transactionHash,
         blockNumber: event.blockNumber.toString(),
-        timestamp: new Date(Number(block.timestamp) * 1000), // Ensure block.timestamp is Number before * 1000
+        timestamp: block ? new Date(Number(block.timestamp) * 1000) : new Date(),
         itemId: parsedEvent.args[0].toString(), // Access by index
         itemName: parsedEvent.args[1],     // Access by index
         creator: parsedEvent.args[2],      // Access by index
@@ -238,12 +249,12 @@ exports.getBlockchainTransactions = async () => {
         continue;
       }
 
-      const block = await provider.getBlock(event.blockNumber);
+      const block = blockMap[event.blockNumber];
       transactions.push(convertBigIntsToStrings({
         type: 'ItemStatusUpdated',
         transactionHash: event.transactionHash,
         blockNumber: event.blockNumber.toString(),
-        timestamp: new Date(Number(block.timestamp) * 1000), // Ensure block.timestamp is Number before * 1000
+        timestamp: block ? new Date(Number(block.timestamp) * 1000) : new Date(),
         itemId: itemIdFromTopic,
         oldStatus: null,
         newStatus: Object.keys(ContractStatus)[Number(newStatusValue)], // Explicitly convert BigInt to Number for array indexing
