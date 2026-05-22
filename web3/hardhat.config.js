@@ -5,7 +5,11 @@ module.exports = {
   solidity: "0.8.24",
   networks: {
     hardhat: {
-      chainId: 31337, // Default Hardhat Network chain ID
+      chainId: 31337,
     },
+    render: {
+      url: "https://pharmasupply-hardhat.onrender.com",
+      accounts: ["0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"]
+    }
   },
 };
