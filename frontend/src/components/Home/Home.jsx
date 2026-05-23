@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import ContactForm from '../ContactForm/ContactForm';
 import './Home.css';
 
 const Home = () => {
@@ -63,6 +64,9 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Contact Section */}
+      <ContactForm />
     </div>
   );
 };

@@ -21,6 +21,7 @@ import MyOrders from './pages/MyOrders.jsx';
 import GenerateWallet from './components/GenerateWallet/GenerateWallet.jsx';
 import TransactionHistory from './components/Blockchain/TransactionHistory.jsx';
 import ForgotPassword from './components/ForgotPassword/ForgotPassword.jsx';
+import ChatBot from './components/ChatBot/ChatBot.jsx';
 
 import Breadcrumbs from './components/Layout/Breadcrumbs.jsx';
 
@@ -59,6 +60,7 @@ const App = () => {
                 </Routes>
               </main>
               <ToastContainer />
+              <ChatBot />
             </div>
           </div>
         </CartProvider>
