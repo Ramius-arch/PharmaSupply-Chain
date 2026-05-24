@@ -101,6 +101,10 @@ const seedDB = async () => {
                 dosageForm: faker.helpers.arrayElement(['Tablet', 'Capsule', 'Syrup', 'Injection']),
                 strength: faker.number.int({ min: 1, max: 500 }) + 'mg',
                 pharmaceuticalCode: faker.string.alphanumeric(12).toUpperCase(),
+                batchNumber: faker.string.alphanumeric(8).toUpperCase(),
+                expiryDate: faker.date.future({ years: 2 }),
+                manufacturingDate: faker.date.past({ years: 1 }),
+                storageConditions: faker.helpers.arrayElement(['Store below 25°C', 'Refrigerate (2-8°C)', 'Protect from light']),
                 image: faker.helpers.arrayElement([
                     'https://images.unsplash.com/photo-1587854692152-cbe660dbbb88?q=80&w=1000&auto=format&fit=crop', // Pills close up, warm
                     'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=1000&auto=format&fit=crop', // Lab equipment, cinematic
