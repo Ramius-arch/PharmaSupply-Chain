@@ -33,7 +33,25 @@
 - **Aesthetic DNA**: Applied custom grain filters and moody radial gradients to the hero section for a premium feel.
 - **Test Integrity**: All backend unit tests passing with 54.5% line coverage.
 
-### Planned Next Steps
-1.  Verify end-to-end connectivity between Render backend and Netlify frontend.
-2.  Implement a more robust "interactive manager" for local development as per README documentation.
-3.  Add a "ChatBot" and "Contact Form" integration similar to the main Quixora site.
+## Stage 4: Production Restoration & Integration (2026-05-23)
+- Verified Render and Netlify tokens; restored production environment variables.
+- Integrated **Quri ChatBot** with PharmaSupply-specific knowledge base (blockchain, tracking, roles).
+- Added **Integrity Audit Contact Form** to the home page for lead generation.
+- **Database**: Initialized dedicated production database via seeder script to ensure high-performance, isolated data state.
+- **Git State**: Local commits completed; pending PAT permission update (Contents: Write) for remote push.
+
+## Stage 5: Real-time Orchestration & Advanced Integration (2026-05-24)
+- **Status Summary**: Implemented real-time WebSocket updates for blockchain transaction notifications.
+- **WebSocket Integration**:
+    - Installed and configured `socket.io` in the backend.
+    - Wrapped the Express server with an HTTP server to support WebSocket connections.
+    - Implemented `initializeEventListeners` in `blockchain.service.js` to listen for smart contract events (`ItemCreated`, `ItemStatusUpdated`).
+    - Integrated `socket.io-client` in the frontend.
+    - Updated `TransactionHistory.jsx` to receive and display new transactions in real-time without page refresh.
+    - Updated `ProductDetails.jsx` to provide real-time status updates for specific pharmaceutical items.
+- **User Experience**: Added real-time "toast" notifications for new blockchain events to improve transparency and engagement.
+
+## Stage 6: Future Enhancements (Planned)
+- Integrate MetaMask/Ethers.js for client-side wallet interactions in production.
+- Implement automated quality assurance (QA) checks for blockchain data integrity.
+

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { io } from 'socket.io-client';
 import './ProductDetails.css'; // Import component-specific CSS
 import placeholderImg from '../../assets/placeholder.png'; // Placeholder image
 import productService from '../../api/productService'; // Import the new product service
@@ -19,6 +20,30 @@ const ProductDetails = () => {
 
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
+
+  useEffect(() => {
+    // Initialize socket connection
+    const socket = io(window.location.origin === 'http://localhost:5173' ? 'http://localhost:3000' : window.location.origin);
+
+    socket.on('blockchain_event', (newEvent) => {
+      if (newEvent.type === 'ItemStatusUpdated' && newEvent.itemId === product?.blockchainItemId) {
+        console.log('Real-time status update received for this item:', newEvent);
+        setBlockchainItem(prev => ({ ...prev, status: newEvent.newStatus }));
+        setBlockchainHistory(prev => [
+          {
+            status: newEvent.newStatus,
+            timestamp: newEvent.timestamp,
+            updater: newEvent.updater
+          },
+          ...(prev || [])
+        ]);
+      }
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [product?.blockchainItemId]);
 
   useEffect(() => {
     const fetchProductDetails = async () => {

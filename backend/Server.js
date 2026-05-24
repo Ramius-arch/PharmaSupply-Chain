@@ -82,7 +82,33 @@ app.use((err, req, res, next) => {
 
 // Start HTTP server FIRST — Render health checks pass even during DB connect
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+const server = require('http').createServer(app);
+const io = require('socket.io')(server, {
+  cors: {
+    origin: "*", // Allow all origins for the PoC
+    methods: ["GET", "POST"]
+  }
+});
+
+// Attach io instance to the request object so it can be used in controllers
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
+// Socket.io connection handling
+io.on('connection', (socket) => {
+  console.log('New client connected:', socket.id);
+  socket.on('disconnect', () => {
+    console.log('Client disconnected:', socket.id);
+  });
+});
+
+// Initialize blockchain event listeners
+const blockchainService = require('./services/blockchain.service');
+blockchainService.initializeEventListeners(io);
+
+server.listen(port, () => {
   console.log(`Server running on port ${port}`);
 
   // Connect to DB after server is listening (non-blocking startup)

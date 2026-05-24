@@ -72,6 +72,41 @@ const supplyChainContract = new ethers.Contract(
 );
 
 /**
+ * @dev Initializes event listeners on the smart contract to provide real-time updates via Socket.io.
+ * @param {object} io - The Socket.io server instance.
+ */
+exports.initializeEventListeners = (io) => {
+  console.log("Initializing blockchain event listeners...");
+
+  // Listen for ItemCreated events
+  supplyChainContract.on("ItemCreated", (itemId, itemName, creator, event) => {
+    console.log(`Real-time Event: ItemCreated - ID: ${itemId}, Name: ${itemName}`);
+    io.emit("blockchain_event", {
+      type: "ItemCreated",
+      itemId: itemId.toString(),
+      itemName: itemName,
+      creator: creator,
+      transactionHash: event.log.transactionHash,
+      timestamp: new Date()
+    });
+  });
+
+  // Listen for ItemStatusUpdated events
+  supplyChainContract.on("ItemStatusUpdated", (itemId, newStatus, updater, event) => {
+    const statusName = Object.keys(ContractStatus)[Number(newStatus)];
+    console.log(`Real-time Event: ItemStatusUpdated - ID: ${itemId}, Status: ${statusName}`);
+    io.emit("blockchain_event", {
+      type: "ItemStatusUpdated",
+      itemId: itemId.toString(),
+      newStatus: statusName,
+      updater: updater,
+      transactionHash: event.log.transactionHash,
+      timestamp: new Date()
+    });
+  });
+};
+
+/**
  * @dev Service function to create a new item on the blockchain.
  *      It interacts with the `createItem` function of the deployed SupplyChain contract.
  * @param {string} description - The description of the item to be created.
