@@ -29,13 +29,24 @@ import Breadcrumbs from './components/Layout/Breadcrumbs.jsx';
 import './App.css';
 
 const App = () => {
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
   return (
     <Router>
       <AuthProvider>
         <CartProvider>
           <div className="app-container">
-            <Sidebar />
-            <div className="main-content">
+            <header className="mobile-only-header">
+              <button className="menu-toggle" onClick={toggleSidebar}>
+                {sidebarOpen ? '✕' : '☰'}
+              </button>
+              <h1 className="logo">PharmaNet</h1>
+              <div style={{ width: '40px' }}></div> {/* Spacer */}
+            </header>
+            <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+            <div className={`main-content ${sidebarOpen ? 'sidebar-open' : ''}`}>
               <Breadcrumbs />
               <main className="content-wrap">
                 <Routes>

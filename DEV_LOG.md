@@ -50,6 +50,10 @@
     - Updated `TransactionHistory.jsx` to receive and display new transactions in real-time without page refresh.
     - Updated `ProductDetails.jsx` to provide real-time status updates for specific pharmaceutical items.
 - **User Experience**: Added real-time "toast" notifications for new blockchain events to improve transparency and engagement.
+- **Database Restoration**: 
+    - Successfully ran the production seeder script.
+    - Fixed a `ValidationError` in `seeders/seed.js` by adding mandatory `batchNumber` and `expiryDate` fields to the Product generator.
+    - Populated the database with 20 users, 10 suppliers, 20 products, and 20 orders to verify production readiness.
 
 ## Stage 6: Future Enhancements (Planned)
 - Integrate MetaMask/Ethers.js for client-side wallet interactions in production.
