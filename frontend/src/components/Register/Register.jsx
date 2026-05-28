@@ -1,9 +1,7 @@
-// src/components/Register/Register.jsx
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
-import './Register.css';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -21,6 +19,10 @@ const Register = () => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    // Clear error when user types
+    if (errors[e.target.name]) {
+      setErrors({ ...errors, [e.target.name]: null });
+    }
   };
 
   const validateForm = () => {
@@ -58,54 +60,96 @@ const Register = () => {
     }
   };
 
+  const inputClasses = (error) => `
+    h-11 px-3 rounded-lg border transition-all focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
+    ${error ? 'border-red-500 bg-red-50' : 'border-slate-300 bg-white'}
+  `;
+
   return (
-    <div className="register-container container animate-fade-in">
-      <div className="register-card card">
-        <div className="register-header" style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <h1 className="logo" style={{ fontSize: '2.5rem', marginBottom: '8px' }}>Join Network</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Register new station on the blockchain</p>
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4 py-10 animate-fade-in">
+      <div className="w-full max-w-lg p-8 bg-white rounded-2xl shadow-card">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-slate-900 mb-2">Join Network</h1>
+          <p className="text-slate-500">Register new station on the blockchain</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="register-form">
-          <div className="grid-2">
-            <div className="input-row">
-              <label>First Name</label>
-              <input name="firstName" value={formData.firstName} onChange={handleChange} placeholder="John" />
-              {errors.firstName && <p className="error-text">{errors.firstName}</p>}
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium text-slate-700">First Name</label>
+              <input 
+                name="firstName" 
+                value={formData.firstName} 
+                onChange={handleChange} 
+                placeholder="John" 
+                className={inputClasses(errors.firstName)}
+              />
+              {errors.firstName && <p className="text-xs text-red-500 font-medium">{errors.firstName}</p>}
             </div>
-            <div className="input-row">
-              <label>Last Name</label>
-              <input name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Doe" />
-              {errors.lastName && <p className="error-text">{errors.lastName}</p>}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium text-slate-700">Last Name</label>
+              <input 
+                name="lastName" 
+                value={formData.lastName} 
+                onChange={handleChange} 
+                placeholder="Doe" 
+                className={inputClasses(errors.lastName)}
+              />
+              {errors.lastName && <p className="text-xs text-red-500 font-medium">{errors.lastName}</p>}
             </div>
           </div>
 
-          <div className="input-row">
-            <label>Communication ID (Email)</label>
-            <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="node@pharma.net" />
-            {errors.email && <p className="error-text">{errors.email}</p>}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-slate-700">Communication ID (Email)</label>
+            <input 
+              type="email" 
+              name="email" 
+              value={formData.email} 
+              onChange={handleChange} 
+              placeholder="node@pharma.net" 
+              className={inputClasses(errors.email)}
+            />
+            {errors.email && <p className="text-xs text-red-500 font-medium">{errors.email}</p>}
           </div>
 
-          <div className="input-row">
-            <label>Security Key (Password)</label>
-            <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="••••••••" />
-            {errors.password && <p className="error-text">{errors.password}</p>}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-slate-700">Security Key (Password)</label>
+            <input 
+              type="password" 
+              name="password" 
+              value={formData.password} 
+              onChange={handleChange} 
+              placeholder="••••••••" 
+              className={inputClasses(errors.password)}
+            />
+            {errors.password && <p className="text-xs text-red-500 font-medium">{errors.password}</p>}
           </div>
 
-          <div className="input-row">
-            <label>Confirm Security Key</label>
-            <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="••••••••" />
-            {errors.confirmPassword && <p className="error-text">{errors.confirmPassword}</p>}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-slate-700">Confirm Security Key</label>
+            <input 
+              type="password" 
+              name="confirmPassword" 
+              value={formData.confirmPassword} 
+              onChange={handleChange} 
+              placeholder="••••••••" 
+              className={inputClasses(errors.confirmPassword)}
+            />
+            {errors.confirmPassword && <p className="text-xs text-red-500 font-medium">{errors.confirmPassword}</p>}
           </div>
 
-          <button type="submit" className="btn btn-primary" style={{ width: '100%', height: '48px', marginTop: '24px' }} disabled={loading}>
+          <button 
+            type="submit" 
+            className="w-full h-12 mt-4 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed transition-all"
+            disabled={loading}
+          >
             {loading ? 'Processing Node ID...' : 'Initialize Station'}
           </button>
         </form>
 
-        <div className="register-footer" style={{ textAlign: 'center', marginTop: '24px' }}>
-          <p style={{ color: 'var(--text-secondary)' }}>
-            Already have a node? <Link to="/login" style={{ color: 'var(--primary)', fontWeight: '600' }}>Authenticate</Link>
+        <div className="text-center mt-8">
+          <p className="text-slate-500 text-sm">
+            Already have a node? <Link to="/login" className="text-primary-600 font-bold hover:underline">Authenticate</Link>
           </p>
         </div>
       </div>

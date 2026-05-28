@@ -2,7 +2,6 @@ import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
-import './Login.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -26,29 +25,30 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container container animate-fade-in">
-      <div className="login-card card">
-        <div className="login-header">
-          <h1 className="logo" style={{ fontSize: '2.5rem', marginBottom: '8px' }}>PharmaSupply</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Secure Node Authentication</p>
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4 py-10 animate-fade-in">
+      <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-card">
+        <div className="text-center mb-10">
+          <h1 className="text-4xl font-bold text-slate-900 mb-2">PharmaSupply</h1>
+          <p className="text-slate-500">Secure Node Authentication</p>
         </div>
 
-        <form onSubmit={handleLogin} className="login-form">
-          <div className="input-row">
-            <label htmlFor="email">Node ID (Email)</label>
+        <form onSubmit={handleLogin} className="flex flex-col gap-6">
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="email" className="text-sm font-medium text-slate-700">Node ID (Email)</label>
             <input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="e.g. admin@pharma.net"
+              className="h-11 px-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
               required
             />
           </div>
-          <div className="input-row">
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <label htmlFor="password">Security Key (Password)</label>
-              <Link to="/forgot-password" style={{ fontSize: '0.8rem', color: 'var(--primary)' }}>Recover Key?</Link>
+          <div className="flex flex-col gap-1.5">
+            <div className="flex justify-between items-center">
+              <label htmlFor="password" className="text-sm font-medium text-slate-700">Security Key (Password)</label>
+              <Link to="/forgot-password" size="sm" className="text-xs font-semibold text-primary-600 hover:text-primary-700">Recover Key?</Link>
             </div>
             <input
               type="password"
@@ -56,18 +56,23 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
+              className="h-11 px-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
               required
             />
           </div>
 
-          <button type="submit" className="btn btn-primary" style={{ width: '100%', height: '48px', marginTop: '16px' }} disabled={loading}>
+          <button 
+            type="submit" 
+            className="w-full h-12 mt-4 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed transition-all"
+            disabled={loading}
+          >
             {loading ? 'Verifying Credentials...' : 'Authenticate'}
           </button>
         </form>
 
-        <div className="login-footer" style={{ textAlign: 'center', marginTop: '24px' }}>
-          <p style={{ color: 'var(--text-secondary)' }}>
-            New node cluster? <Link to="/register" style={{ color: 'var(--primary)', fontWeight: '600' }}>Register Station</Link>
+        <div className="text-center mt-8">
+          <p className="text-slate-500 text-sm">
+            New node cluster? <Link to="/register" className="text-primary-600 font-bold hover:underline">Register Station</Link>
           </p>
         </div>
       </div>
