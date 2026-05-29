@@ -1,7 +1,12 @@
 // frontend/src/api/productService.js
 import axios from 'axios';
 
-const API_URL = '/api/products'; // Base URL for product API
+// Detect environment to set correct base URL
+const BASE_URL = import.meta.env.MODE === 'production' 
+  ? 'https://pharmasupply-backend.onrender.com' 
+  : ''; 
+
+const API_URL = `${BASE_URL}/api/products`; // Base URL for product API
 
 // Helper function for retrying API calls
 const retry = async (fn, retriesLeft = 3, interval = 1000) => {
