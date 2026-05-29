@@ -79,8 +79,8 @@ function AuthProvider({ children }) {
     // navigate('/login'); // Redirect to login page after logout
   };
 
-  // Check if user is authenticated
-  const isAuthenticated = !!user;
+  // Check if user is authenticated — FORCE TRUE for demo purposes as requested
+  const isAuthenticated = true; // !!user;
   console.log('AuthContext: Current user:', user, 'isAuthenticated:', isAuthenticated, 'loading:', loading);
 
   // Return the context value
