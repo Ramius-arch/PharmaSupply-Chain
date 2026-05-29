@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login, loading } = useContext(AuthContext);
+  const { login, loginGuest, loading } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -22,6 +22,12 @@ const Login = () => {
     } catch (error) {
       toast.error(error.message || 'Authentication failed');
     }
+  };
+
+  const handleGuestLogin = () => {
+    loginGuest();
+    navigate('/');
+    toast.success('Demo Session Started');
   };
 
   return (
@@ -61,13 +67,23 @@ const Login = () => {
             />
           </div>
 
-          <button 
-            type="submit" 
-            className="w-full h-12 mt-4 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed transition-all"
-            disabled={loading}
-          >
-            {loading ? 'Verifying Credentials...' : 'Authenticate'}
-          </button>
+          <div className="flex flex-col gap-3 mt-4">
+            <button 
+              type="submit" 
+              className="w-full h-12 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed transition-all"
+              disabled={loading}
+            >
+              {loading ? 'Verifying Credentials...' : 'Authenticate'}
+            </button>
+
+            <button 
+              type="button" 
+              onClick={handleGuestLogin}
+              className="w-full h-12 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200 active:scale-[0.98] transition-all"
+            >
+              Launch Demo (Surveyor Access)
+            </button>
+          </div>
         </form>
 
         <div className="text-center mt-8">

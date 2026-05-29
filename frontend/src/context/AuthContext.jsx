@@ -56,6 +56,20 @@ function AuthProvider({ children }) {
     }
   };
 
+  // Function to handle guest/demo login
+  const loginGuest = () => {
+    const guestUser = {
+      firstName: 'Demo',
+      lastName: 'Surveyor',
+      email: 'guest@quixora.net',
+      role: 'admin',
+      token: 'demo-token-123'
+    };
+    setUser(guestUser);
+    localStorage.setItem('user', JSON.stringify(guestUser));
+    console.log('AuthContext: Guest user session initialized.');
+  };
+
   // Function to handle logout
   const logout = () => {
     console.log('AuthContext: Logging out user...');
@@ -71,7 +85,7 @@ function AuthProvider({ children }) {
 
   // Return the context value
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, isAuthenticated }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, isAuthenticated, loginGuest }}>
       {children}
     </AuthContext.Provider>
   );

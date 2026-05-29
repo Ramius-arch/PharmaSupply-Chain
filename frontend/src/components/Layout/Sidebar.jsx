@@ -21,8 +21,9 @@ const Sidebar = ({ isOpen, onClose }) => {
 
         <nav className="sidebar-nav">
           <div className="nav-group">
-            <span className="group-label">General</span>
+            <span className="group-label">Gateway</span>
             <ul>
+              <li><a href="https://quixora.netlify.app" className="nav-link">🌐 Main Site</a></li>
               <li><Link to="/" className="nav-link" onClick={onClose}>🏠 Home</Link></li>
               <li><Link to="/products" className="nav-link" onClick={onClose}>💊 Products</Link></li>
             </ul>

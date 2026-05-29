@@ -19,7 +19,7 @@
 
 .content-wrap {
   flex-grow: 1;
-  padding: 40px 0;
+  padding: 40px 24px;
 }
 
 @media (max-width: 1024px) {
@@ -58,7 +58,7 @@
   }
 
   .content-wrap {
-    padding: 20px 0;
+    padding: 20px 16px;
   }
 }
 
