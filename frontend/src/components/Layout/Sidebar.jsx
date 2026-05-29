@@ -83,6 +83,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         )}
       </div>
     </div>
+    </>
   );
 };
 
