@@ -6,8 +6,14 @@ import authService from '../api/authService'; // Import the authService
 const AuthContext = createContext();
 
 function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [user, setUser] = useState({
+    firstName: 'Public',
+    lastName: 'User',
+    email: 'public@quixora.net',
+    role: 'admin',
+    token: 'public-access-token'
+  });
+  const [loading, setLoading] = useState(false); // No loading needed for public access
   // const navigate = useNavigate(); // Use navigate for React Router v6
 
   // Load user from localStorage on component mount

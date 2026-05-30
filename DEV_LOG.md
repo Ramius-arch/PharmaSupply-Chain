@@ -55,7 +55,17 @@
     - Fixed a `ValidationError` in `seeders/seed.js` by adding mandatory `batchNumber` and `expiryDate` fields to the Product generator.
     - Populated the database with 20 users, 10 suppliers, 20 products, and 20 orders to verify production readiness.
 
-## Stage 6: Future Enhancements (Planned)
-- Integrate MetaMask/Ethers.js for client-side wallet interactions in production.
-- Implement automated quality assurance (QA) checks for blockchain data integrity.
+## Stage 7: Public Demo Access (2026-05-30)
+- **Status Summary**: Removed all authentication barriers to make the application 100% accessible to public users without login.
+- **Frontend Simplification**:
+    - Modified `AuthContext.jsx` to initialize with a default "Public Node" admin session.
+    - Updated `ProtectedRoute.jsx` to be transparent, allowing access to all previously restricted areas.
+    - Refactored `app.jsx` to remove login, registration, and password recovery routes.
+    - Cleaned up `Sidebar.jsx` to hide authentication links and exit buttons, presenting a unified "Public Node Access" view.
+- **Backend Transparency**:
+    - Refactored `auth.middleware.js` to automatically "authenticate" all requests with a mock admin identity.
+    - Modified `role.middleware.js` to bypass permission checks, ensuring all API endpoints are accessible.
+- **User Experience**: The app now feels like a public explorer/management tool where users can interact with products, orders, and blockchain ledger entries immediately upon entry.
+
+## Stage 8: Future Enhancements (Planned)
 

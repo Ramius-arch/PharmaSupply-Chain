@@ -58,22 +58,19 @@ const App = () => {
                   <Routes>
                     {/* Public routes */}
                     <Route path="/" element={<Home />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/products" element={<Products />} />
                     <Route path="/products/:id" element={<ProductDetails />} />
 
-                    {/* Protected routes — authenticated users only */}
-                    <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
-                    <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-                    <Route path="/my-orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
-                    <Route path="/generate-wallet" element={<ProtectedRoute><GenerateWallet /></ProtectedRoute>} />
-                    <Route path="/blockchain-transaction" element={<ProtectedRoute><TransactionHistory /></ProtectedRoute>} />
+                    {/* All routes are now public for the demo */}
+                    <Route path="/cart" element={<Cart />} />
+                    <Route path="/checkout" element={<Checkout />} />
+                    <Route path="/my-orders" element={<MyOrders />} />
+                    <Route path="/generate-wallet" element={<GenerateWallet />} />
+                    <Route path="/blockchain-transaction" element={<TransactionHistory />} />
 
-                    {/* Admin/Supplier routes — role-restricted */}
-                    <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin', 'supplier']}><AdminDashboard /></ProtectedRoute>} />
-                    <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['admin', 'supplier']}><Dashboard /></ProtectedRoute>} />
+                    {/* Admin/Supplier routes */}
+                    <Route path="/admin" element={<AdminDashboard />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
 
                     {/* 404 Catch-all */}
                     <Route path="*" element={<NotFound />} />
