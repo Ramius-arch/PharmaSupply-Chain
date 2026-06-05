@@ -1,0 +1,15 @@
+name: Test Workflow
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ping
+        run: echo "Repository checkout successful"
+      - name: List Files
+        run: ls -la
