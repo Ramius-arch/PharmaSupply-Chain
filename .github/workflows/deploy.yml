@@ -25,10 +25,14 @@ jobs:
       - name: Install Dependencies
         run: npm ci || npm install
       - name: Run Backend Tests
-        run: npm test --workspace=backend
+        run: |
+          echo "Listing environment variables..."
+          env | sort
+          echo "Running tests..."
+          npm test --workspace=backend -- --verbose
         env:
           JWT_SECRET: "test-secret"
-          LOG_LEVEL: "error"
+          LOG_LEVEL: "debug"
           MONGODB_URI: "mongodb://localhost:27017/test"
       - name: Build Frontend
         run: npm run build --workspace=frontend
