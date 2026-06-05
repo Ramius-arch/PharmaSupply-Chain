@@ -20,7 +20,10 @@ if (fs.existsSync(contractAddressPath)) {
     try {
         const abiPath = path.join(__dirname, 'abi.json');
         if (fs.existsSync(abiPath)) {
-            contractABI = JSON.parse(fs.readFileSync(abiPath));
+            let rawAbi = fs.readFileSync(abiPath, 'utf8');
+            // Strip potential Byte Order Mark (BOM)
+            rawAbi = rawAbi.replace(/^\uFEFF/, '');
+            contractABI = JSON.parse(rawAbi);
         } else {
             console.error('Blockchain config: abi.json not found!');
         }
