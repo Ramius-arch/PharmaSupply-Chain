@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import App from './app';
 import { ThemeProvider } from './context/ThemeContext'; // Import ThemeProvider
 
 // Make sure to import any global styles or fonts here
