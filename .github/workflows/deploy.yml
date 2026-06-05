@@ -9,6 +9,11 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
     steps:
       - uses: actions/checkout@v4
       - name: List files (Debug)
@@ -24,6 +29,7 @@ jobs:
         env:
           JWT_SECRET: "test-secret"
           LOG_LEVEL: "error"
+          MONGODB_URI: "mongodb://localhost:27017/test"
       - name: Build Frontend
         run: npm run build --workspace=frontend
 

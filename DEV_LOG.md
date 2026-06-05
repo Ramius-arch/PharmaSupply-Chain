@@ -67,5 +67,17 @@
     - Modified `role.middleware.js` to bypass permission checks, ensuring all API endpoints are accessible.
 - **User Experience**: The app now feels like a public explorer/management tool where users can interact with products, orders, and blockchain ledger entries immediately upon entry.
 
-## Stage 8: Future Enhancements (Planned)
+## Stage 8: CI/CD Implementation & Troubleshooting (2026-06-05)
+- **Status Summary**: Migrated the deployment workflow to the local repository and began stabilization.
+- **Workflow Migration**: 
+    - Created `.github/workflows/deploy.yml` to automate testing and multi-platform deployment (Netlify/Render).
+    - Configured triggers for `main` branch pushes and pull requests.
+- **Troubleshooting**: 
+    - Commit `c38d2da` triggered but failed during execution.
+    - **CI/CD Fixes**: 
+    - Added MongoDB service container to `deploy.yml` to support backend tests.
+    - Added `MONGODB_URI` environment variable to test job.
+    - Verified `npm run build` is included to generate frontend static assets.
+
+## Stage 9: Future Enhancements (Planned)
 
