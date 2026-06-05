@@ -137,6 +137,7 @@
 @media (max-width: 1024px) {
   .sidebar {
     transform: translateX(-100%);
+    z-index: 1000;
   }
 
   .sidebar.open {
@@ -150,7 +151,7 @@
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 90;
+    z-index: 900;
     backdrop-filter: blur(4px);
   }
 }
