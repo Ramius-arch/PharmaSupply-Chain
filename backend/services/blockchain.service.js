@@ -59,7 +59,8 @@ const provider = new ethers.JsonRpcProvider(process.env.BLOCKCHAIN_RPC_URL || "h
  *      For development, the private key of Account #0 (deployer) from the Hardhat node is used.
  *      In a production environment, this would be handled securely (e.g., KMS, hardware wallet).
  */
-const signer = new ethers.Wallet(process.env.DEV_PRIVATE_KEY, provider);
+const privateKey = process.env.DEV_PRIVATE_KEY || '0x0000000000000000000000000000000000000000000000000000000000000001';
+const signer = new ethers.Wallet(privateKey, provider);
 
 /**
  * @dev Creates an Ethers.js Contract instance for the SupplyChain smart contract.
