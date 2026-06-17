@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
@@ -7,78 +7,75 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // Components
 import Sidebar from './components/Layout/Sidebar.jsx';
+import Header from './components/Layout/Header.jsx';
 import ProtectedRoute from './components/Layout/ProtectedRoute.jsx';
-import Breadcrumbs from './components/Layout/Breadcrumbs.jsx';
-import ScrollToTop from './components/Layout/ScrollToTop.jsx';
-import PageSkeleton from './components/Layout/PageSkeleton.jsx';
-import ChatBot from './components/ChatBot/ChatBot.jsx';
+import Home from './components/Home/Home.jsx';
+import Login from './components/Login/Login.jsx';
+import Register from './components/Register/Register.jsx';
+import Products from './pages/Product.jsx';
+import ProductDetails from './components/ProductDetails/ProductDetails.jsx';
+import Cart from './components/Cart/Cart.jsx';
+import Checkout from './components/Checkout/Checkout.jsx';
+import AdminDashboard from './components/AdminDashboard/AdminDashboard.jsx';
+import Dashboard from './components/Dashboard/Dashboard.jsx';
+import MyOrders from './pages/MyOrders.jsx';
+import GenerateWallet from './components/GenerateWallet/GenerateWallet.jsx';
+import TransactionHistory from './components/Blockchain/TransactionHistory.jsx';
+import ForgotPassword from './components/ForgotPassword/ForgotPassword.jsx';
 
-// Lazy loaded pages/components
-const Home = lazy(() => import('./components/Home/Home.jsx'));
-const Login = lazy(() => import('./components/Login/Login.jsx'));
-const Register = lazy(() => import('./components/Register/Register.jsx'));
-const Products = lazy(() => import('./pages/Product.jsx'));
-const ProductDetails = lazy(() => import('./components/ProductDetails/ProductDetails.jsx'));
-const Cart = lazy(() => import('./components/Cart/Cart.jsx'));
-const Checkout = lazy(() => import('./components/Checkout/Checkout.jsx'));
-const AdminDashboard = lazy(() => import('./components/AdminDashboard/AdminDashboard.jsx'));
-const Dashboard = lazy(() => import('./components/Dashboard/Dashboard.jsx'));
-const MyOrders = lazy(() => import('./pages/MyOrders.jsx'));
-const GenerateWallet = lazy(() => import('./components/GenerateWallet/GenerateWallet.jsx'));
-const TransactionHistory = lazy(() => import('./components/Blockchain/TransactionHistory.jsx'));
-const ForgotPassword = lazy(() => import('./components/ForgotPassword/ForgotPassword.jsx'));
-const NotFound = lazy(() => import('./pages/NotFound.jsx'));
+import Breadcrumbs from './components/Layout/Breadcrumbs.jsx';
 
 // Styles
 import './App.css';
 
 const App = () => {
-  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+  const closeSidebar = () => setSidebarOpen(false);
 
   return (
     <Router>
-      <ScrollToTop />
       <AuthProvider>
         <CartProvider>
-          <div className="app-container">
-            <header className="mobile-only-header">
-              <button className="menu-toggle" onClick={toggleSidebar}>
-                {sidebarOpen ? '✕' : '☰'}
-              </button>
-              <h1 className="logo">PharmaNet</h1>
-              <div style={{ width: '40px' }}></div> {/* Spacer */}
-            </header>
-            <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-            <div className={`main-content ${sidebarOpen ? 'sidebar-open' : ''}`}>
-              <Breadcrumbs />
-              <main className="content-wrap">
-                <Suspense fallback={<PageSkeleton />}>
-                  <Routes>
-                    {/* Public routes */}
-                    <Route path="/" element={<Home />} />
-                    <Route path="/products" element={<Products />} />
-                    <Route path="/products/:id" element={<ProductDetails />} />
+          <div className={`app-container ${sidebarOpen ? 'sidebar-open' : ''}`}>
+            <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
-                    {/* All routes are now public for the demo */}
-                    <Route path="/cart" element={<Cart />} />
-                    <Route path="/checkout" element={<Checkout />} />
-                    <Route path="/my-orders" element={<MyOrders />} />
-                    <Route path="/generate-wallet" element={<GenerateWallet />} />
-                    <Route path="/blockchain-transaction" element={<TransactionHistory />} />
+            {/* Mobile Overlay */}
+            {sidebarOpen && (
+              <div className="sidebar-overlay" onClick={closeSidebar}></div>
+            )}
 
-                    {/* Admin/Supplier routes */}
-                    <Route path="/admin" element={<AdminDashboard />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
+            <div className="main-content">
+              <Header onToggleSidebar={toggleSidebar} />
 
-                    {/* 404 Catch-all */}
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </Suspense>
+              <div className="desktop-breadcrumb-wrap">
+                <Breadcrumbs />
+              </div>
+
+              <main className="content-wrap" onClick={closeSidebar}>
+                <Routes>
+                  {/* Public routes */}
+                  <Route path="/" element={<Home />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                  <Route path="/products" element={<Products />} />
+                  <Route path="/products/:id" element={<ProductDetails />} />
+
+                  {/* Protected routes — authenticated users only */}
+                  <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+                  <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+                  <Route path="/my-orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
+                  <Route path="/generate-wallet" element={<ProtectedRoute><GenerateWallet /></ProtectedRoute>} />
+                  <Route path="/blockchain-transaction" element={<ProtectedRoute><TransactionHistory /></ProtectedRoute>} />
+
+                  {/* Admin/Supplier routes — role-restricted (demo access: now public) */}
+                  <Route path="/admin" element={<AdminDashboard />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                </Routes>
               </main>
               <ToastContainer />
-              <ChatBot />
             </div>
           </div>
         </CartProvider>
@@ -86,5 +83,4 @@ const App = () => {
     </Router>
   );
 };
-
 export default App;
