@@ -79,5 +79,12 @@
     - Added `MONGODB_URI` environment variable to test job.
     - Verified `npm run build` is included to generate frontend static assets.
 
-## Stage 9: Future Enhancements (Planned)
+## Stage 9: Production Seeding Dependency Alignment (2026-06-18)
+- **Status Summary**: Resolved a production-critical deployment crash on Render.
+- **Production Dependency Alignment**:
+    - **Issue**: Render production builds run with `NODE_ENV=production`, causing `npm install` to skip `devDependencies`. This caused the post-build automated seed step (`node seeders/seed.js`) to crash with `Error: Cannot find module '@faker-js/faker'`.
+    - **Action**: Relocated `@faker-js/faker` from `devDependencies` to production `dependencies` in `backend/package.json`.
+    - **Result**: Ensures mock data generation libraries are available during production deployment builds, restoring full deployment stability.
+
+## Stage 10: Future Enhancements (Planned)
 

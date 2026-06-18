@@ -1,24 +1,30 @@
-==> Downloading cache...
-==> It looks like we don't have access to your repo, but we'll try to clone it anyway.
-==> Cloning from https://github.com/Ramius-arch/PharmaSupply-Chain
-==> Checking out commit 7576a526d85cf9c1c9e046ca24ee1ee1455c37a4 in branch main
-==> Downloaded 147MB in 4s. Extraction took 3s.
-==> Using Node.js version 24.14.1 (default)
-==> Docs on specifying a Node.js version: https://render.com/docs/node-version
-==> Running build command 'cd backend && npm install && node seeders/seed.js'...
-added 207 packages, and audited 209 packages in 32s
-36 packages are looking for funding
+
+up to date, audited 210 packages in 33s
+35 packages are looking for funding
   run `npm fund` for details
-2 moderate severity vulnerabilities
+2 vulnerabilities (1 moderate, 1 high)
 To address all issues (including breaking changes), run:
   npm audit fix --force
 Run `npm audit` for details.
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
-Retrying MongoDB connection in 2s...
-MongoDB connection failed. Retries left: 4. Error: Could not connect to any servers in your MongoDB Atlas cluster. One common reason is that you're trying to access the database from an IP that isn't whitelisted. Make sure your current IP address is on your Atlas cluster's IP whitelist: https://www.mongodb.com/docs/atlas/security-whitelist/
-Retrying MongoDB connection in 4s...
-MongoDB connection failed. Retries left: 3. Error: Could not connect to any servers in your MongoDB Atlas cluster. One common reason is that you're trying to access the database from an IP that isn't whitelisted. Make sure your current IP address is on your Atlas cluster's IP whitelist: https://www.mongodb.com/docs/atlas/security-whitelist/
-MongoDB connection failed. Retries left: 2. Error: Could not connect to any servers in your MongoDB Atlas cluster. One common reason is that you're trying to access the database from an IP that isn't whitelisted. Make sure your current IP address is on your Atlas cluster's IP whitelist: https://www.mongodb.com/docs/atlas/security-whitelist/
-Retrying MongoDB connection in 8s...
-MongoDB connection failed. Retries left: 1. Error: Could not connect to any servers in your MongoDB Atlas cluster. One common reason is that you're trying to access the database from an IP that isn't whitelisted. Make sure your current IP address is on your Atlas cluster's IP whitelist: https://www.mongodb.com/docs/atlas/security-whitelist/
-Retrying MongoDB connection in 16s...
+node:internal/modules/cjs/loader:1459
+  throw err;
+  ^
+Error: Cannot find module '@faker-js/faker'
+Require stack:
+- /opt/render/project/src/backend/seeders/seed.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1456:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)
+    at Module._load (node:internal/modules/cjs/loader:1242:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.require (node:internal/modules/cjs/loader:1556:12)
+    at require (node:internal/modules/helpers:152:16)
+    at Object.<anonymous> (/opt/render/project/src/backend/seeders/seed.js:2:19)
+    at Module._compile (node:internal/modules/cjs/loader:1812:14)
+    at Object..js (node:internal/modules/cjs/loader:1943:10) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/opt/render/project/src/backend/seeders/seed.js' ]
+}
+Node.js v24.14.1
+==> Build failed 😞
+==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
