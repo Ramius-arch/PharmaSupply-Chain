@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { toast } from 'react-toastify';
 import './AdminDashboard.css';
 import productService from '../../api/productService';
 import blockchainService from '../../api/blockchainService';
@@ -44,21 +45,56 @@ const ProductManagement = () => {
     setNewProduct({ ...newProduct, [name]: value });
   };
 
+  const handleEdit = (product) => {
+    setNewProduct({
+      ...product,
+      unitPrice: product.unitPrice.toString(),
+      quantityInStock: product.quantityInStock.toString()
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    toast.info(`Editing ${product.name}. Update the form above and submit.`);
+  };
+
+  const handleDelete = async (productId) => {
+    if (window.confirm('Are you sure you want to decommission this pharmaceutical product? This action is irreversible on the local database.')) {
+      setLoading(true);
+      try {
+        await productService.deleteProduct(productId, token);
+        setProducts(products.filter(p => p._id !== productId));
+        toast.success('Product removed from active inventory.');
+      } catch (err) {
+        toast.error('Failed to delete product.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     try {
-      // 1. Create blockchain item
-      const blockchainResponse = await blockchainService.createBlockchainItem(newProduct.description, token);
-      const blockchainItemId = blockchainResponse.data.itemId;
+      if (newProduct._id) {
+        // Update existing
+        const response = await productService.updateProduct(newProduct._id, newProduct, token);
+        setProducts(products.map(p => p._id === newProduct._id ? response.data : p));
+        toast.success('Product data updated successfully.');
+      } else {
+        // 1. Create blockchain item
+        const blockchainResponse = await blockchainService.createBlockchainItem(newProduct.description, token);
+        const blockchainItemId = blockchainResponse.data.itemId;
 
-      // 2. Create product with blockchainItemId
-      const productToCreate = { ...newProduct, blockchainItemId };
-      const productResponse = await productService.createProduct(productToCreate, token);
+        // 2. Create product with blockchainItemId
+        const productToCreate = { ...newProduct, blockchainItemId };
+        const productResponse = await productService.createProduct(productToCreate, token);
 
-      // 3. Update products list
-      setProducts([...products, productResponse.data]);
+        // 3. Update products list
+        setProducts([...products, productResponse.data]);
+        toast.success('New product registered on ledger.');
+      }
+      
       setNewProduct({
         name: '',
         description: '',
@@ -71,7 +107,8 @@ const ProductManagement = () => {
         pharmaceuticalCode: '',
       });
     } catch (err) {
-      setError('Failed to create product.');
+      setError('Operation failed. Check console for details.');
+      toast.error('Failed to save product changes.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -149,8 +186,20 @@ const ProductManagement = () => {
                   </span>
                 </td>
                 <td style={{ textAlign: 'right' }}>
-                  <button className="btn btn-outline" style={{ padding: '4px 12px', fontSize: '0.8rem', marginRight: '8px' }}>Edit</button>
-                  <button className="btn btn-outline" style={{ padding: '4px 12px', fontSize: '0.8rem', color: 'var(--danger)', borderColor: 'var(--danger)' }}>Delete</button>
+                  <button 
+                    className="btn btn-outline" 
+                    style={{ padding: '4px 12px', fontSize: '0.8rem', marginRight: '8px' }}
+                    onClick={() => handleEdit(product)}
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    className="btn btn-outline" 
+                    style={{ padding: '4px 12px', fontSize: '0.8rem', color: 'var(--danger)', borderColor: 'var(--danger)' }}
+                    onClick={() => handleDelete(product._id)}
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}

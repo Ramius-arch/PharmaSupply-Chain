@@ -1,38 +1,26 @@
 const fs = require('fs');
 const path = require('path');
+const env = require('./env');
 
-const contractAddressPath = path.join(__dirname, '..', '..', 'web3', 'contract-address.json');
-let contractAddress;
-let contractABI;
-
-if (fs.existsSync(contractAddressPath)) {
+function loadContractFromFile() {
+  const contractAddressPath = path.join(__dirname, '..', '..', 'web3', 'contract-address.json');
+  if (fs.existsSync(contractAddressPath)) {
     const rawData = fs.readFileSync(contractAddressPath);
     const data = JSON.parse(rawData);
-    contractAddress = data.address;
-    contractABI = data.abi;
-} else {
-    // Fallback for production PoC (e.g., Render) where Hardhat might reset
-    // This is the standard first contract address on a fresh Hardhat node
-    contractAddress = process.env.CONTRACT_ADDRESS || '0x5FbDB2315678afecb367f032d93F642f64180aa3';
-    console.warn(`Blockchain config: contract-address.json not found. Using fallback address: ${contractAddress}`);
-    
-    // Use the exported ABI from config/abi.json
-    try {
-        const abiPath = path.join(__dirname, 'abi.json');
-        if (fs.existsSync(abiPath)) {
-            let rawAbi = fs.readFileSync(abiPath, 'utf8');
-            // Strip potential Byte Order Mark (BOM)
-            rawAbi = rawAbi.replace(/^\uFEFF/, '');
-            contractABI = JSON.parse(rawAbi);
-        } else {
-            console.error('Blockchain config: abi.json not found!');
-        }
-    } catch (e) {
-        console.error('Blockchain config: Failed to load fallback ABI:', e.message);
-    }
+    return { address: data.address, abi: data.abi };
+  }
+  return { address: undefined, abi: undefined };
 }
 
+// Environment variables take precedence over the local contract-address.json file.
+const fromEnv = {
+  address: env.BLOCKCHAIN_CONTRACT_ADDRESS,
+  abi: env.BLOCKCHAIN_CONTRACT_ABI ? JSON.parse(env.BLOCKCHAIN_CONTRACT_ABI) : undefined
+};
+
+const fromFile = loadContractFromFile();
+
 module.exports = {
-    SUPPLY_CHAIN_CONTRACT_ADDRESS: contractAddress,
-    SUPPLY_CHAIN_CONTRACT_ABI: contractABI
+  SUPPLY_CHAIN_CONTRACT_ADDRESS: fromEnv.address || fromFile.address,
+  SUPPLY_CHAIN_CONTRACT_ABI: fromEnv.abi || fromFile.abi
 };

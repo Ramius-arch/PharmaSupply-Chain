@@ -1,30 +1,72 @@
+Run npm run build
 
-up to date, audited 210 packages in 33s
-35 packages are looking for funding
-  run `npm fund` for details
-2 vulnerabilities (1 moderate, 1 high)
-To address all issues (including breaking changes), run:
-  npm audit fix --force
-Run `npm audit` for details.
-node:internal/modules/cjs/loader:1459
-  throw err;
-  ^
-Error: Cannot find module '@faker-js/faker'
-Require stack:
-- /opt/render/project/src/backend/seeders/seed.js
-    at Module._resolveFilename (node:internal/modules/cjs/loader:1456:15)
-    at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)
-    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)
-    at Module._load (node:internal/modules/cjs/loader:1242:25)
-    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
-    at Module.require (node:internal/modules/cjs/loader:1556:12)
-    at require (node:internal/modules/helpers:152:16)
-    at Object.<anonymous> (/opt/render/project/src/backend/seeders/seed.js:2:19)
-    at Module._compile (node:internal/modules/cjs/loader:1812:14)
-    at Object..js (node:internal/modules/cjs/loader:1943:10) {
-  code: 'MODULE_NOT_FOUND',
-  requireStack: [ '/opt/render/project/src/backend/seeders/seed.js' ]
-}
-Node.js v24.14.1
-==> Build failed 😞
-==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+> frontend@0.0.0 build
+> vite build
+
+vite v5.4.21 building for production...
+transforming...
+x Build failed in 58ms
+✓ 3 modules transformed.
+error during build:
+Could not resolve "./App" from "src/index.jsx"
+file: /home/runner/work/pharmasupply-blockchain/pharmasupply-blockchain/frontend/src/index.jsx
+    at getRollupError (file:///home/runner/work/pharmasupply-blockchain/pharmasupply-blockchain/node_modules/rollup/dist/es/shared/parseAst.js:317:41)
+    at error (file:///home/runner/work/pharmasupply-blockchain/pharmasupply-blockchain/node_modules/rollup/dist/es/shared/parseAst.js:313:42)
+    at ModuleLoader.handleInvalidResolvedId (file:///home/runner/work/pharmasupply-blockchain/pharmasupply-blockchain/node_modules/rollup/dist/es/shared/node-entry.js:22167:24)
+    at file:///home/runner/work/pharmasupply-blockchain/pharmasupply-blockchain/node_modules/rollup/dist/es/shared/node-entry.js:22127:26
+npm error Lifecycle script `build` failed with error:
+npm error code 1
+npm error path /home/runner/work/pharmasupply-blockchain/pharmasupply-blockchain/frontend
+npm error workspace frontend@0.0.0
+npm error location /home/runner/work/pharmasupply-blockchain/pharmasupply-blockchain/frontend
+npm error command failed
+npm error command sh -c vite build
+Error: Process completed with exit code 1.
+
+Run npm test
+
+> backend@1.0.0 test
+> jest --forceExit --detectOpenHandles
+
+Downloading MongoDB "7.0.24": 0% (0mb / 81.8mb)
+Downloading MongoDB "7.0.24": 100% (81.8mb / 81.8mb)
+Downloading MongoDB "7.0.24": 100% (0mb / 0mb)
+FAIL tests/unit/order.service.test.js
+  ● Test suite failed to run
+
+    TypeError: Cannot read properties of undefined (reading 'testEnvironmentOptions')
+
+      at new NodeEnvironment (../node_modules/jest-environment-node/build/index.js:88:49)
+
+FAIL tests/unit/product.service.test.js
+  ● Test suite failed to run
+
+    TypeError: Cannot read properties of undefined (reading 'testEnvironmentOptions')
+
+      at new NodeEnvironment (../node_modules/jest-environment-node/build/index.js:88:49)
+
+FAIL tests/unit/auth.service.test.js
+  ● Test suite failed to run
+
+    TypeError: Cannot read properties of undefined (reading 'testEnvironmentOptions')
+
+      at new NodeEnvironment (../node_modules/jest-environment-node/build/index.js:88:49)
+
+----------|---------|----------|---------|---------|-------------------
+File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+----------|---------|----------|---------|---------|-------------------
+All files |       0 |        0 |       0 |       0 |                   
+----------|---------|----------|---------|---------|-------------------
+Test Suites: 3 failed, 3 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        0.077s
+Ran all test suites.
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path /home/runner/work/pharmasupply-blockchain/pharmasupply-blockchain/backend
+npm error workspace backend@1.0.0
+npm error location /home/runner/work/pharmasupply-blockchain/pharmasupply-blockchain/backend
+npm error command failed
+npm error command sh -c jest --forceExit --detectOpenHandles
+Error: Process completed with exit code 1.

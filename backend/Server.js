@@ -7,9 +7,6 @@ const swaggerUi = require('swagger-ui-express');
 const yaml = require('yamljs');
 const path = require('path');
 
-// Handle BigInt serialization globally
-BigInt.prototype.toJSON = function () { return this.toString(); };
-
 // Load configuration settings
 const config = require('./config');
 
@@ -19,59 +16,70 @@ const app = express();
 // Security headers
 app.use(helmet());
 
-// Rate limiting — 100 requests per 15 minutes per IP
-const limiter = rateLimit({
+// Rate limiting — general API: 100 requests per 15 minutes per IP
+const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
   standardHeaders: true,
   legacyHeaders: false,
   message: { message: 'Too many requests, please try again later.' }
 });
-app.use('/api', limiter);
+app.use('/api', generalLimiter);
 
-// Enable CORS for all origins (portfolio PoC)
-app.use(cors());
+// Stricter rate limiting for authentication endpoints
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many authentication attempts. Please try again later.' }
+});
+app.use('/api/auth', authLimiter);
+
+// CORS: restrict to configured origin(s) in production
+const corsOrigin = process.env.CORS_ORIGIN || (config.NODE_ENV === 'development' ? true : false);
+app.use(cors({
+  origin: corsOrigin,
+  credentials: true
+}));
 
 // Parse JSON request bodies
-app.use(express.json({ limit: '10kb' }));
+app.use(express.json({ limit: '10kb' })); // Limit body size to prevent abuse
 
-// Serve static files
+// Serve static files (like images or documents)
 app.use('/uploads', express.static('uploads'));
 
 // Load API documentation from swagger.yaml
 const swaggerDocument = yaml.load(path.join(__dirname, 'docs/swagger.yaml'));
+
+// Use Swagger UI for interactive API documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// Health check — always responds, reports DB connection state
-app.get('/health', (req, res) => {
-  const dbState = mongoose.connection.readyState;
-  const dbStatus = ['disconnected', 'connected', 'connecting', 'disconnecting'][dbState] || 'unknown';
-  res.status(200).json({
-    status: 'ok',
-    db: dbStatus,
-    uptime: process.uptime(),
-    timestamp: new Date().toISOString()
+// Database connection setup
+config.connectToDatabase()
+  .catch((err) => {
+    console.error('Failed to connect to the database:', err);
+    process.exit(1);
   });
-});
 
-// Mount API routes
+// Define routes (import and mount them here)
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
 const productRoutes = require('./routes/product.routes');
 const orderRoutes = require('./routes/order.routes');
 const supplierRoutes = require('./routes/supplier.routes');
-const blockchainRoutes = require('./routes/blockchain.routes');
-const walletRoutes = require('./routes/wallet.routes');
+const blockchainRoutes = require('./routes/blockchain.routes'); // Import blockchain routes
+const walletRoutes = require('./routes/wallet.routes'); // Import wallet routes
 
+// Use the routes with a base path (e.g., /api)
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/suppliers', supplierRoutes);
-app.use('/api/blockchain', blockchainRoutes);
-app.use('/api/wallet', walletRoutes);
-
-// Global error handler
+app.use('/api/blockchain', blockchainRoutes); // Mount blockchain routes
+app.use('/api/wallet', walletRoutes); // Mount wallet routes
+// Error handling middleware (must be defined after routes)
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send({
@@ -80,41 +88,26 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start HTTP server FIRST — Render health checks pass even during DB connect
+// Start the server
 const port = process.env.PORT || 3000;
-const server = require('http').createServer(app);
-const io = require('socket.io')(server, {
-  cors: {
-    origin: "*", // Allow all origins for the PoC
-    methods: ["GET", "POST"]
-  }
+const server = app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });
 
-// Attach io instance to the request object so it can be used in controllers
-app.use((req, res, next) => {
-  req.io = io;
-  next();
-});
-
-// Socket.io connection handling
-io.on('connection', (socket) => {
-  console.log('New client connected:', socket.id);
-  socket.on('disconnect', () => {
-    console.log('Client disconnected:', socket.id);
+// Graceful shutdown
+const shutdown = (signal) => {
+  console.log(`Received ${signal}. Shutting down gracefully...`);
+  server.close(async () => {
+    try {
+      await mongoose.connection.close(false);
+      console.log('MongoDB connection closed.');
+      process.exit(0);
+    } catch (err) {
+      console.error('Error during shutdown:', err);
+      process.exit(1);
+    }
   });
-});
+};
 
-// Initialize blockchain event listeners
-const blockchainService = require('./services/blockchain.service');
-blockchainService.initializeEventListeners(io);
-
-server.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-
-  // Connect to DB after server is listening (non-blocking startup)
-  config.connectToDatabase()
-    .catch((err) => {
-      // Don't exit — retry logic in database.js will reconnect
-      console.error('Initial DB connection failed, retrying in background:', err.message);
-    });
-});
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));

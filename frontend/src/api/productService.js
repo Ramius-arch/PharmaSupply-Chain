@@ -1,26 +1,29 @@
 // frontend/src/api/productService.js
 import axios from 'axios';
 
-// Detect environment to set correct base URL
-const BASE_URL = import.meta.env.MODE === 'production' 
-  ? 'https://pharmasupply-backend.onrender.com' 
-  : ''; 
+const API_URL = '/api/products'; // Base URL for product API
 
-const API_URL = `${BASE_URL}/api/products`; // Base URL for product API
-
-// Helper function for retrying API calls
+// Helper function for retrying API calls.
+// IMPORTANT: Only retries on network errors or server-side 5xx failures.
+// Never retries client-side 4xx errors (Bad Request, Not Found, Unauthorized, etc.)
 const retry = async (fn, retriesLeft = 3, interval = 1000) => {
   try {
     return await fn();
   } catch (error) {
-    if (retriesLeft) {
+    const status = error?.response?.status;
+    // Do not retry if the server returned a 4xx response
+    if (status && status >= 400 && status < 500) {
+      throw error;
+    }
+    if (retriesLeft > 0) {
       console.warn(`Retrying in ${interval / 1000}s... (${retriesLeft} retries left)`);
       await new Promise(resolve => setTimeout(resolve, interval));
-      return retry(fn, retriesLeft - 1, interval);
+      return retry(fn, retriesLeft - 1, interval * 2); // exponential back-off
     }
     throw error;
   }
 };
+
 
 // Function to fetch all products
 const getAllProducts = async () => {

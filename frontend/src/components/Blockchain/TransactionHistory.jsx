@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
-import { io } from 'socket.io-client';
 import { AuthContext } from '../../context/AuthContext';
+import blockchainService from '../../api/blockchainService';
 import { toast } from 'react-toastify';
-import Analytics from './Analytics'; // Import the Analytics component
-import TransactionFilters from './TransactionFilters'; // Import the TransactionFilters component
-import './TransactionHistory.css'; // Import component-specific CSS
+import Analytics from './Analytics';
+import TransactionFilters from './TransactionFilters';
+import './TransactionHistory.css';
 
 const TransactionHistory = () => {
   const { user, isAuthenticated, loading: authLoading } = useContext(AuthContext); // Destructure authLoading
@@ -31,29 +30,6 @@ const TransactionHistory = () => {
   const handleSearchChange = (value) => {
     setSearchQuery(value);
   };
-
-  useEffect(() => {
-    // Initialize socket connection
-    const socket = io(window.location.origin === 'http://localhost:5173' ? 'http://localhost:3000' : window.location.origin);
-
-    socket.on('connect', () => {
-      console.log('Connected to WebSocket server');
-    });
-
-    socket.on('blockchain_event', (newEvent) => {
-      console.log('New blockchain event received:', newEvent);
-      setTransactions((prevTransactions) => [newEvent, ...prevTransactions]);
-      toast.info(`New Transaction: ${newEvent.type}`);
-    });
-
-    socket.on('disconnect', () => {
-      console.log('Disconnected from WebSocket server');
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
 
   const filteredAndSortedTransactions = transactions
     .filter(tx => {
@@ -99,13 +75,9 @@ const TransactionHistory = () => {
       }
 
       try {
-        setLoading(true); // Set component's loading state
-        const response = await axios.get('/api/blockchain/transactions', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setTransactions(response.data.data);
+        setLoading(true);
+        const data = await blockchainService.getTransactions(token);
+        setTransactions(data?.data ?? []);
       } catch (err) {
         setError('Failed to fetch blockchain transactions. Ensure backend and blockchain are running.');
         console.error('Error fetching blockchain transactions:', err);

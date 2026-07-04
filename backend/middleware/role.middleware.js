@@ -6,10 +6,16 @@
  */
 exports.checkRole = (allowedRoles) => {
   return (req, res, next) => {
-    // Transparently allow all roles for public access demo
-    if (!req.user) {
-        req.user = { id: 'mock-user-id', role: 'admin' };
+    if (!req.user || !req.user.role) {
+      return res.status(403).json({ message: 'Forbidden - No role assigned' });
     }
+
+    const hasRole = allowedRoles.some(role => req.user.role.includes(role));
+
+    if (!hasRole) {
+      return res.status(403).json({ message: 'Forbidden - Insufficient permissions' });
+    }
+    
     next();
   };
 };

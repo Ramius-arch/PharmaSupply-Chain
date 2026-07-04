@@ -24,31 +24,57 @@
 /* Overview Styles */
 .overview-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+@media (min-width: 576px) {
+    .overview-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (min-width: 992px) {
+    .overview-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+    }
 }
 
 .stat-card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 16px;
-    padding: 24px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
+@media (min-width: 768px) {
+    .stat-card {
+        padding: 24px;
+    }
+}
+
 .stat-label {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
     text-transform: uppercase;
     font-weight: 600;
 }
 
 .stat-value {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 700;
     color: var(--text-primary);
+}
+
+@media (min-width: 768px) {
+    .stat-value {
+        font-size: 2.5rem;
+    }
 }
 
 /* Section Containers */
@@ -121,8 +147,56 @@
     color: var(--danger);
 }
 
-@media (max-width: 992px) {
-    .overview-grid {
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .grid-2 {
         grid-template-columns: 1fr;
+    }
+
+    .admin-section {
+        padding: 20px 16px;
+    }
+
+    .dashboard-title {
+        font-size: 1.8rem;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+    }
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+/* Ensure horizontal scroll for all tables on mobile */
+.admin-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 20px;
+    border-radius: 12px;
+}
+
+@media (max-width: 576px) {
+    .admin-table {
+        min-width: 480px; /* Allow horizontal scroll without overflowing small screens */
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 12px;
+        font-size: 0.85rem;
     }
 }

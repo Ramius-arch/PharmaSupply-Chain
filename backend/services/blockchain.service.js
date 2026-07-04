@@ -1,4 +1,5 @@
 const { ethers } = require("ethers");
+const env = require('../config/env');
 const { SUPPLY_CHAIN_CONTRACT_ADDRESS, SUPPLY_CHAIN_CONTRACT_ABI } = require('../config/blockchain');
 
 /**
@@ -48,64 +49,35 @@ const ContractStatus = {
   Canceled: 3,
 };
 
+if (!SUPPLY_CHAIN_CONTRACT_ADDRESS || !SUPPLY_CHAIN_CONTRACT_ABI) {
+  console.warn('Blockchain contract address or ABI is missing. Blockchain features will be unavailable.');
+}
+
+if (!env.DEV_PRIVATE_KEY) {
+  console.warn('DEV_PRIVATE_KEY is not set. Blockchain write operations will be unavailable.');
+}
+
 /**
- * @dev Initializes an Ethers.js provider to connect to the blockchain network.
- *      Defaults to local Hardhat network (http://127.0.0.1:8545).
+ * @dev Initializes an Ethers.js provider from the configured RPC URL.
  */
-const provider = new ethers.JsonRpcProvider(process.env.BLOCKCHAIN_RPC_URL || "http://127.0.0.1:8545");
+const provider = new ethers.JsonRpcProvider(env.HARDHAT_RPC_URL);
 
 /**
  * @dev Initializes an Ethers.js Wallet instance to sign transactions.
- *      For development, the private key of Account #0 (deployer) from the Hardhat node is used.
- *      In a production environment, this would be handled securely (e.g., KMS, hardware wallet).
+ *      For development, the private key from environment variables is used.
+ *      In production, this should be replaced with a KMS/HSM signer.
  */
-const privateKey = process.env.DEV_PRIVATE_KEY || '0x0000000000000000000000000000000000000000000000000000000000000001';
-const signer = new ethers.Wallet(privateKey, provider);
+const signer = env.DEV_PRIVATE_KEY
+  ? new ethers.Wallet(env.DEV_PRIVATE_KEY, provider)
+  : null;
 
 /**
  * @dev Creates an Ethers.js Contract instance for the SupplyChain smart contract.
  *      This instance is used to interact with the deployed contract on the blockchain.
  */
-const supplyChainContract = new ethers.Contract(
-  SUPPLY_CHAIN_CONTRACT_ADDRESS,
-  SUPPLY_CHAIN_CONTRACT_ABI,
-  signer
-);
-
-/**
- * @dev Initializes event listeners on the smart contract to provide real-time updates via Socket.io.
- * @param {object} io - The Socket.io server instance.
- */
-exports.initializeEventListeners = (io) => {
-  console.log("Initializing blockchain event listeners...");
-
-  // Listen for ItemCreated events
-  supplyChainContract.on("ItemCreated", (itemId, itemName, creator, event) => {
-    console.log(`Real-time Event: ItemCreated - ID: ${itemId}, Name: ${itemName}`);
-    io.emit("blockchain_event", {
-      type: "ItemCreated",
-      itemId: itemId.toString(),
-      itemName: itemName,
-      creator: creator,
-      transactionHash: event.log.transactionHash,
-      timestamp: new Date()
-    });
-  });
-
-  // Listen for ItemStatusUpdated events
-  supplyChainContract.on("ItemStatusUpdated", (itemId, newStatus, updater, event) => {
-    const statusName = Object.keys(ContractStatus)[Number(newStatus)];
-    console.log(`Real-time Event: ItemStatusUpdated - ID: ${itemId}, Status: ${statusName}`);
-    io.emit("blockchain_event", {
-      type: "ItemStatusUpdated",
-      itemId: itemId.toString(),
-      newStatus: statusName,
-      updater: updater,
-      transactionHash: event.log.transactionHash,
-      timestamp: new Date()
-    });
-  });
-};
+const supplyChainContract = SUPPLY_CHAIN_CONTRACT_ADDRESS && SUPPLY_CHAIN_CONTRACT_ABI && signer
+  ? new ethers.Contract(SUPPLY_CHAIN_CONTRACT_ADDRESS, SUPPLY_CHAIN_CONTRACT_ABI, signer)
+  : null;
 
 /**
  * @dev Service function to create a new item on the blockchain.
@@ -115,6 +87,9 @@ exports.initializeEventListeners = (io) => {
  * @throws {Error} If the transaction fails or the item ID cannot be retrieved.
  */
 exports.createItemOnBlockchain = async (description) => {
+  if (!supplyChainContract) {
+    throw new Error('Blockchain contract is not configured');
+  }
   try {
     const tx = await supplyChainContract.createItem(description);
     const receipt = await tx.wait(); // Wait for the transaction to be mined
@@ -158,6 +133,9 @@ exports.createItemOnBlockchain = async (description) => {
  * @throws {Error} If the newStatus is invalid or the transaction fails.
  */
 exports.updateItemStatusOnBlockchain = async (itemId, newStatus) => {
+  if (!supplyChainContract) {
+    throw new Error('Blockchain contract is not configured');
+  }
   try {
     // Convert string status to its corresponding blockchain enum value.
     const statusValue = ContractStatus[newStatus]; 
@@ -181,6 +159,9 @@ exports.updateItemStatusOnBlockchain = async (itemId, newStatus) => {
  * @throws {Error} If the item cannot be retrieved from the blockchain.
  */
 exports.getItemFromBlockchain = async (itemId) => {
+  if (!supplyChainContract) {
+    throw new Error('Blockchain contract is not configured');
+  }
   try {
     const item = await supplyChainContract.getItem(itemId);
     // Convert BigInts from Solidity to JavaScript numbers/strings and enum value to string.
@@ -204,6 +185,9 @@ exports.getItemFromBlockchain = async (itemId) => {
  * @throws {Error} If the item history cannot be retrieved from the blockchain.
  */
 exports.getItemHistoryFromBlockchain = async (itemId) => {
+  if (!supplyChainContract) {
+    throw new Error('Blockchain contract is not configured');
+  }
   try {
     const history = await supplyChainContract.getItemHistory(itemId);
     // Map raw history data to a more readable format.
@@ -224,6 +208,9 @@ exports.getItemHistoryFromBlockchain = async (itemId) => {
  * @throws {Error} If events cannot be retrieved from the blockchain.
  */
 exports.getBlockchainTransactions = async () => {
+  if (!supplyChainContract) {
+    throw new Error('Blockchain contract is not configured');
+  }
   try {
     // Define filters for the events we are interested in
     const itemCreatedFilter = supplyChainContract.filters.ItemCreated();
@@ -232,17 +219,6 @@ exports.getBlockchainTransactions = async () => {
     // Query events from block 0 to 'latest'
     const createdEvents = await supplyChainContract.queryFilter(itemCreatedFilter, 0, 'latest');
     const updatedEvents = await supplyChainContract.queryFilter(itemStatusUpdatedFilter, 0, 'latest');
-
-    // Optimization: Collect all unique block numbers to fetch block data in parallel
-    const blockNumbers = [...new Set([
-      ...createdEvents.map(e => e.blockNumber),
-      ...updatedEvents.map(e => e.blockNumber)
-    ])];
-
-    const blockMap = {};
-    await Promise.all(blockNumbers.map(async (bn) => {
-      blockMap[bn] = await provider.getBlock(bn);
-    }));
 
     let transactions = [];
 
@@ -253,12 +229,12 @@ exports.getBlockchainTransactions = async () => {
         console.error('Error: Failed to parse ItemCreated event or event.args is undefined:', event);
         continue;
       }
-      const block = blockMap[event.blockNumber];
+      const block = await provider.getBlock(event.blockNumber);
       transactions.push(convertBigIntsToStrings({
         type: 'ItemCreated',
         transactionHash: event.transactionHash,
         blockNumber: event.blockNumber.toString(),
-        timestamp: block ? new Date(Number(block.timestamp) * 1000) : new Date(),
+        timestamp: new Date(Number(block.timestamp) * 1000), // Ensure block.timestamp is Number before * 1000
         itemId: parsedEvent.args[0].toString(), // Access by index
         itemName: parsedEvent.args[1],     // Access by index
         creator: parsedEvent.args[2],      // Access by index
@@ -285,12 +261,12 @@ exports.getBlockchainTransactions = async () => {
         continue;
       }
 
-      const block = blockMap[event.blockNumber];
+      const block = await provider.getBlock(event.blockNumber);
       transactions.push(convertBigIntsToStrings({
         type: 'ItemStatusUpdated',
         transactionHash: event.transactionHash,
         blockNumber: event.blockNumber.toString(),
-        timestamp: block ? new Date(Number(block.timestamp) * 1000) : new Date(),
+        timestamp: new Date(Number(block.timestamp) * 1000), // Ensure block.timestamp is Number before * 1000
         itemId: itemIdFromTopic,
         oldStatus: null,
         newStatus: Object.keys(ContractStatus)[Number(newStatusValue)], // Explicitly convert BigInt to Number for array indexing
