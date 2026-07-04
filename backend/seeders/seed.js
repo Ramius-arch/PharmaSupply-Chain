@@ -87,31 +87,123 @@ const seedDB = async () => {
         console.log(`Seeded ${suppliers.length} suppliers.`);
 
         // --- Create Products ---
+        const productTemplates = [
+            {
+                name: 'Amoxicillin 500mg',
+                description: 'Broad-spectrum penicillin antibiotic used to treat bacterial infections such as pneumonia, strep throat, and urinary tract infections.',
+                manufacturer: 'GlaxoSmithKline Pharma',
+                category: 'Antibiotics',
+                dosageForm: 'Tablet',
+                strength: '500mg',
+                image: '/images/amoxicillin.png',
+                unitPrice: 24.50,
+                storageConditions: 'Store below 25°C in a dry place'
+            },
+            {
+                name: 'Atorvastatin 20mg',
+                description: 'Statin medication used to prevent cardiovascular disease in those at high risk and lower lipid levels.',
+                manufacturer: 'Pfizer Inc.',
+                category: 'Cardiovascular',
+                dosageForm: 'Tablet',
+                strength: '20mg',
+                image: '/images/atorvastatin.png',
+                unitPrice: 45.00,
+                storageConditions: 'Store between 20°C and 25°C'
+            },
+            {
+                name: 'Insulin Glargine 100 U/mL',
+                description: 'Long-acting human insulin analog used to improve glycemic control in patients with type 1 and type 2 diabetes mellitus.',
+                manufacturer: 'Sanofi Aventis',
+                category: 'Endocrine',
+                dosageForm: 'Injection',
+                strength: '100 U/mL',
+                image: '/images/insulin.png',
+                unitPrice: 120.00,
+                storageConditions: 'Store in refrigerator (2°C to 8°C). Do not freeze.'
+            },
+            {
+                name: 'Metformin HCl 850mg',
+                description: 'First-line medication for the treatment of type 2 diabetes, particularly in people who are overweight.',
+                manufacturer: 'Bristol-Myers Squibb',
+                category: 'Endocrine',
+                dosageForm: 'Tablet',
+                strength: '850mg',
+                image: '/images/metformin.png',
+                unitPrice: 15.80,
+                storageConditions: 'Store below 30°C'
+            },
+            {
+                name: 'Azithromycin 250mg',
+                description: 'Macrolide antibiotic used for the treatment of a number of bacterial infections including middle ear infections, strep throat, and pneumonia.',
+                manufacturer: 'Sandoz Pharma',
+                category: 'Antibiotics',
+                dosageForm: 'Tablet',
+                strength: '250mg',
+                image: '/images/azithromycin.png',
+                unitPrice: 32.20,
+                storageConditions: 'Store below 25°C'
+            },
+            {
+                name: 'Ibuprofen 400mg',
+                description: 'Nonsteroidal anti-inflammatory drug (NSAID) used for treating pain, fever, and inflammatory symptoms.',
+                manufacturer: 'McNeil Consumer Healthcare',
+                category: 'Analgesics',
+                dosageForm: 'Capsule',
+                strength: '400mg',
+                image: '/images/ibuprofen.png',
+                unitPrice: 8.50,
+                storageConditions: 'Store in a dry place below 25°C'
+            },
+            {
+                name: 'Loratadine 10mg',
+                description: 'Second-generation antihistamine used to treat allergies, hay fever, and hives without causing drowsiness.',
+                manufacturer: 'Bayer Healthcare',
+                category: 'Antihistamines',
+                dosageForm: 'Tablet',
+                strength: '10mg',
+                image: '/images/loratadine.png',
+                unitPrice: 18.00,
+                storageConditions: 'Store between 15°C and 25°C'
+            },
+            {
+                name: 'Spikevax mRNA Vaccine',
+                description: 'COVID-19 vaccine designed to provide protection against the SARS-CoV-2 virus.',
+                manufacturer: 'Moderna Biotech',
+                category: 'Vaccines',
+                dosageForm: 'Injection',
+                strength: '0.5 mL',
+                image: '/images/vaccine.png',
+                unitPrice: 95.00,
+                storageConditions: 'Store frozen between -50°C and -15°C'
+            }
+        ];
+
         const products = [];
         for (let i = 0; i < 20; i++) { // 20 products
+            const template = productTemplates[i % productTemplates.length];
             const randomSupplier = faker.helpers.arrayElement(suppliers);
+            
+            // Generate manufacturing date and future expiry date
+            const manufacturingDate = faker.date.past({ years: 1 });
+            const expiryDate = faker.date.future({ years: 2, refDate: manufacturingDate });
+
             products.push(new Product({
-                name: faker.commerce.productName(),
-                description: faker.commerce.productDescription(),
-                manufacturer: faker.company.name(),
+                name: template.name,
+                description: template.description,
+                manufacturer: template.manufacturer,
                 supplier: randomSupplier._id,
-                category: faker.commerce.department(),
-                unitPrice: faker.commerce.price({ min: 10, max: 200, dec: 2 }),
+                category: template.category,
+                unitPrice: template.unitPrice,
                 quantityInStock: faker.number.int({ min: 50, max: 1000 }),
-                dosageForm: faker.helpers.arrayElement(['Tablet', 'Capsule', 'Syrup', 'Injection']),
-                strength: faker.number.int({ min: 1, max: 500 }) + 'mg',
+                dosageForm: template.dosageForm,
+                strength: template.strength,
                 pharmaceuticalCode: faker.string.alphanumeric(12).toUpperCase(),
-                batchNumber: faker.string.alphanumeric(8).toUpperCase(),
-                expiryDate: faker.date.future({ years: 2 }),
-                manufacturingDate: faker.date.past({ years: 1 }),
-                storageConditions: faker.helpers.arrayElement(['Store below 25°C', 'Refrigerate (2-8°C)', 'Protect from light']),
-                image: faker.helpers.arrayElement([
-                    'https://images.unsplash.com/photo-1587854692152-cbe660dbbb88?q=80&w=1000&auto=format&fit=crop', // Pills close up, warm
-                    'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=1000&auto=format&fit=crop', // Lab equipment, cinematic
-                    'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=1000&auto=format&fit=crop', // Medicine bottle, moody
-                    'https://images.unsplash.com/photo-1631549916768-4119b2e5f926?q=80&w=1000&auto=format&fit=crop', // Modern pharmacy, high contrast
-                    'https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?q=80&w=1000&auto=format&fit=crop', // Scientific research
-                ]),
+                image: template.image,
+                batchNumber: 'LOT-' + faker.string.alphanumeric(8).toUpperCase(),
+                manufacturingDate: manufacturingDate,
+                expiryDate: expiryDate,
+                storageConditions: template.storageConditions,
+                requiresPrescription: template.category === 'Antibiotics' || template.category === 'Endocrine' || template.category === 'Vaccines'
             }));
         }
         await Product.insertMany(products);
