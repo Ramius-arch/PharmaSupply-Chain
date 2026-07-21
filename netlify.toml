@@ -2,8 +2,8 @@
 
 [build]
   base = "frontend"
-  publish = "dist"
-  command = "npm run build"
+  publish = "frontend/dist"
+  command = "cd frontend && npm install && npm run build"
 
 # Proxy API requests to Render backend
 [[redirects]]
