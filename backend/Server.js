@@ -49,6 +49,11 @@ app.use(express.json({ limit: '10kb' })); // Limit body size to prevent abuse
 // Serve static files (like images or documents)
 app.use('/uploads', express.static('uploads'));
 
+// Health check endpoint for cloud platforms (Render/Docker/K8s)
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // Load API documentation from swagger.yaml
 const swaggerDocument = yaml.load(path.join(__dirname, 'docs/swagger.yaml'));
 
