@@ -9,9 +9,10 @@
     rgba(9, 13, 20, 0.95) 100%
   );
   border-top: 1px solid var(--border-subtle);
-  padding: 48px 0 28px 0;
+  padding: clamp(36px, 4.5vw, 60px) 0 clamp(24px, 3vw, 36px) 0;
   margin-top: auto;
   position: relative;
+  width: 100%;
 }
 
 .modern-footer::before {
@@ -24,17 +25,24 @@
   background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.25), transparent);
 }
 
+.modern-footer .container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--page-gutter);
+  width: 100%;
+}
+
 .footer-top-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 36px;
-  margin-bottom: 40px;
+  gap: clamp(24px, 3vw, 40px);
+  margin-bottom: clamp(28px, 3.5vw, 40px);
 }
 
 @media (min-width: 768px) {
   .footer-top-grid {
     grid-template-columns: 2fr 1fr 1.5fr;
-    gap: 40px;
+    gap: clamp(28px, 3vw, 48px);
   }
 }
 

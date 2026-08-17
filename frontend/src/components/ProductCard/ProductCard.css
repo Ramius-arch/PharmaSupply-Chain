@@ -93,10 +93,10 @@
 
 /* Card Body */
 .product-card-body {
-  padding: 20px;
+  padding: clamp(14px, 1.6vw, 20px);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: clamp(8px, 1vw, 12px);
   flex-grow: 1;
 }
 
@@ -104,7 +104,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.72rem;
+  font-size: var(--text-xs);
   color: var(--text-muted);
   font-weight: 600;
 }
@@ -116,7 +116,7 @@
 
 .product-title {
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: clamp(0.98rem, 1.1vw, 1.15rem);
   font-weight: 700;
   line-height: 1.3;
 }
