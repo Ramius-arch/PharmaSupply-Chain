@@ -3,13 +3,19 @@ import { CartContext } from '../../context/CartContext';
 import { AuthContext } from '../../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faLock,
+  faShieldHalved,
+  faArrowRight,
+  faBoxOpen,
+} from '@fortawesome/free-solid-svg-icons';
 import orderService from '../../api/orderService';
-import './Checkout.css';
-
-// Import the missing components
 import OrderSummary from './OrderSummary';
 import ShippingForm from './ShippingForm';
 import PaymentForm from './PaymentForm';
+import LoadingSpinner from '../UI/LoadingSpinner';
+import './Checkout.css';
 
 const Checkout = () => {
   const { cartItems, clearCart } = useContext(CartContext);
@@ -24,22 +30,30 @@ const Checkout = () => {
     city: '',
     state: '',
     zipCode: '',
-    phoneNumber: user?.phone || ''
+    phoneNumber: user?.phone || '',
   });
-  const [paymentMethod, setPaymentMethod] = useState('credit');
+  const [paymentMethod, setPaymentMethod] = useState('crypto');
 
   // Calculate total amount
-  const totalAmount = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  const totalAmount = (cartItems || []).reduce((acc, item) => {
+    const p = item.unitPrice !== undefined ? item.unitPrice : (item.price > 100 ? item.price / 100 : item.price) || 0;
+    return acc + p * item.quantity;
+  }, 0);
 
-  if (isLoading) return <div className="loading">Initializing Secure Checkout...</div>;
+  if (isLoading) return <LoadingSpinner message="Initializing Secure Handshake..." fullScreen />;
 
   if (!user) {
     return (
-      <div className="checkout-wrapper">
-        <h2>Checkout</h2>
-        <div className="card" style={{ textAlign: 'center', padding: '48px' }}>
-          <p style={{ marginBottom: '24px' }}>Session expired or not authenticated.</p>
-          <Link to="/login" className="btn btn-primary">Sign In to Continue</Link>
+      <div className="checkout-wrapper container animate-fade-in">
+        <div className="card" style={{ textAlign: 'center', padding: '64px 24px', maxWidth: '540px', margin: '40px auto' }}>
+          <FontAwesomeIcon icon={faLock} style={{ fontSize: '2.5rem', color: 'var(--accent-primary)', marginBottom: '16px' }} />
+          <h2 style={{ fontSize: '1.75rem', fontWeight: '800', color: '#fff', marginBottom: '8px' }}>Session Verification Required</h2>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
+            Please authenticate your station account before locking the smart contract escrow.
+          </p>
+          <Link to="/login" className="btn btn-primary btn-lg" style={{ width: '100%' }}>
+            Sign In to Station
+          </Link>
         </div>
       </div>
     );
@@ -48,7 +62,7 @@ const Checkout = () => {
   const handleShippingChange = (e) => {
     setShippingAddress({
       ...shippingAddress,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -58,77 +72,81 @@ const Checkout = () => {
 
   const checkoutHandler = async () => {
     if (!shippingAddress.address1 || !shippingAddress.city) {
-      return toast.error('Please provide a valid shipping address.');
+      return toast.error('Please provide a complete facility delivery address.');
     }
 
     setProcessing(true);
     try {
       const orderData = {
         items: cartItems.map(item => ({
-          product: item.productId,
+          product: item.productId || item.id || item._id,
           quantity: item.quantity,
-          price: item.price
+          price: item.unitPrice !== undefined ? item.unitPrice : (item.price > 100 ? item.price / 100 : item.price) || 0,
         })),
         shippingAddress: `${shippingAddress.address1}, ${shippingAddress.address2 ? shippingAddress.address2 + ', ' : ''}${shippingAddress.city}, ${shippingAddress.state} ${shippingAddress.zipCode}`,
         paymentMethod,
-        totalAmount
+        totalAmount,
       };
 
-      const response = await orderService.createOrder(orderData, user.token);
+      await orderService.createOrder(orderData, user.token);
       
-      toast.success('Inventory Secured & Blockchain Log Created!');
+      toast.success('Inventory Secured & Blockchain Manifest Minted!');
       clearCart();
       navigate('/checkout/success');
     } catch (err) {
       console.error('Checkout failed:', err);
-      toast.error(err.response?.data?.message || 'Transaction failed. Please try again.');
+      toast.error(err.response?.data?.message || 'Transaction failed on node. Check connectivity.');
     } finally {
       setProcessing(false);
     }
   };
 
   return (
-    <div className="checkout-wrapper">
+    <div className="checkout-wrapper container animate-fade-in">
       <div className="checkout-header">
-        <h2>Shipment Authentication</h2>
-        <p className="subtitle">Verify manifests and shipping destination</p>
+        <span className="section-eyebrow">Cryptographic Settlement</span>
+        <h1 className="checkout-headline">Shipment Authentication & Escrow</h1>
+        <p className="checkout-subtitle">Verify consignment manifest, delivery facility node, and custody release rules.</p>
       </div>
       
       {cartItems.length === 0 ? (
-        <div className="card" style={{ textAlign: 'center' }}>
-          <p>Your shipment cart is empty.</p>
-          <Link to="/products" className="btn btn-outline mt-4">Browse Products</Link>
+        <div className="card" style={{ textAlign: 'center', padding: '64px 24px', maxWidth: '540px', margin: '0 auto' }}>
+          <FontAwesomeIcon icon={faBoxOpen} style={{ fontSize: '2.5rem', color: 'var(--text-muted)', marginBottom: '16px' }} />
+          <h3 style={{ color: '#fff', marginBottom: '8px' }}>Consignment Cart is Empty</h3>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>Stage products from the catalog before checking out.</p>
+          <Link to="/products" className="btn btn-outline">Browse Catalog</Link>
         </div>
       ) : (
         <div className="checkout-grid">
           <div className="checkout-main">
             <section className="checkout-section card">
-              <h3>Shipping Information</h3>
+              <h3>Facility Destination Node</h3>
               <ShippingForm onChange={handleShippingChange} values={shippingAddress} />
             </section>
 
-            <section className="checkout-section card mt-6">
-              <h3>Payment Method</h3>
+            <section className="checkout-section card">
+              <h3>Consensus & Settlement Method</h3>
               <PaymentForm method={paymentMethod} onChange={handlePaymentChange} />
             </section>
           </div>
 
           <aside className="checkout-sidebar">
-            <div className="card sticky-top">
-              <h3>Order Summary</h3>
+            <div className="card">
+              <h3>Order Ledger Summary</h3>
               <OrderSummary items={cartItems} totalAmount={totalAmount} />
               
               <button 
-                className="btn btn-primary btn-large mt-6" 
+                className="btn btn-primary btn-lg checkout-submit-btn" 
                 onClick={checkoutHandler}
                 disabled={processing}
-                style={{ width: '100%' }}
               >
-                {processing ? 'Processing Ledger...' : 'Authenticate & Ship'}
+                <FontAwesomeIcon icon={faShieldHalved} />
+                <span>{processing ? 'Signing Ledger Consignment...' : 'Authenticate & Lock Escrow'}</span>
               </button>
               
               <div className="security-note">
-                🔒 SSL Encrypted Checkout
+                <FontAwesomeIcon icon={faLock} className="text-emerald" />
+                <span>256-Bit Encrypted Multi-Sig Consensus</span>
               </div>
             </div>
           </aside>

@@ -1,0 +1,88 @@
+/* PaymentForm.css */
+.payment-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.payment-method-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.payment-method-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.payment-method-option:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.payment-method-option.selected {
+  background: rgba(255, 107, 0, 0.08);
+  border-color: var(--accent-primary);
+}
+
+.payment-method-option input[type="radio"] {
+  width: auto;
+  accent-color: var(--accent-primary);
+  cursor: pointer;
+}
+
+.option-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-grow: 1;
+}
+
+.option-icon {
+  font-size: 1.25rem;
+}
+
+.option-title {
+  display: block;
+  font-size: 0.92rem;
+  color: var(--text-primary);
+}
+
+.option-desc {
+  display: block;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.payment-details-card {
+  background: rgba(14, 20, 31, 0.85);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-top: 6px;
+}
+
+.crypto-wallet-notice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.85rem;
+}
+
+.crypto-wallet-notice strong {
+  display: block;
+  color: var(--text-primary);
+}
+
+.crypto-wallet-notice p {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  margin: 0;
+}
