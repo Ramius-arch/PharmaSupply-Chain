@@ -1,1 +1,6 @@
+/* Register.css */
 @import '../Login/Login.css';
+
+.register-wide {
+  max-width: 560px !important;
+}

@@ -1,7 +1,12 @@
+/* ─────────────────────────────────────────────────────────────
+   App Shell Layout Styles
+───────────────────────────────────────────────────────────── */
+
 .app-container {
   display: flex;
   min-height: 100vh;
-  background-color: var(--background);
+  background-color: var(--bg-base);
+  position: relative;
   overflow-x: hidden;
 }
 
@@ -11,35 +16,51 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  transition: transform 300ms var(--ease-out), margin 300ms var(--ease-out);
+  transition: transform var(--transition-base), margin var(--transition-base);
+  position: relative;
+  z-index: 1;
+}
+
+.desktop-breadcrumb-wrap {
+  padding: 16px 24px 0 24px;
+}
+
+@media (min-width: 1024px) {
+  .desktop-breadcrumb-wrap {
+    padding: 24px 36px 0 36px;
+  }
 }
 
 .content-wrap {
   flex-grow: 1;
-  padding: 20px;
+  padding: 20px 16px 40px 16px;
+  max-width: 100%;
 }
 
 @media (min-width: 768px) {
   .content-wrap {
-    padding: 44px 48px;
+    padding: 28px 32px 64px 32px;
   }
 }
 
-/* ─── Sidebar overlay (mobile) ─────────────────────────────── */
-.sidebar-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(17, 76, 90, 0.30);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  z-index: 95;
-  animation: fadeIn 0.2s var(--ease-out);
+@media (min-width: 1280px) {
+  .content-wrap {
+    padding: 32px 48px 80px 48px;
+  }
 }
 
-/* ─── Responsive ───────────────────────────────────────────── */
+/* ─── Sidebar Overlay (Mobile) ─────────────────────────────── */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(9, 13, 20, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 95;
+  animation: fadeIn 200ms var(--ease-out);
+}
+
+/* ─── Responsive Breakpoints ───────────────────────────────── */
 @media (max-width: 1024px) {
   .main-content {
     margin-left: 0;

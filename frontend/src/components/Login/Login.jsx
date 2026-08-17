@@ -2,72 +2,115 @@ import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faShieldHalved,
+  faEye,
+  faEyeSlash,
+  faLock,
+  faEnvelope,
+  faArrowRight,
+  faCube,
+} from '@fortawesome/free-solid-svg-icons';
 import './Login.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const { login, loading } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!email || !password) {
-      toast.error('Please fill in all fields');
+      toast.error('Please enter both node identifier and security key.');
       return;
     }
     try {
       await login(email, password);
       navigate('/');
-      toast.success('Access Granted - Session Initialized');
+      toast.success('Access Granted - Node Handshake Established');
     } catch (error) {
-      toast.error(error.message || 'Authentication failed');
+      toast.error(error.message || 'Authentication failed. Verify credentials.');
     }
   };
 
   return (
-    <div className="login-container container animate-fade-in">
-      <div className="login-card card">
-        <div className="login-header">
-          <h1 className="logo" style={{ fontSize: '2.5rem', marginBottom: '8px' }}>PharmaSupply</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Secure Node Authentication</p>
+    <div className="auth-page-container container animate-fade-in">
+      <div className="auth-glass-card card animate-scale-in">
+        {/* Header Lockup */}
+        <div className="auth-header">
+          <div className="auth-icon-badge">
+            <FontAwesomeIcon icon={faShieldHalved} />
+          </div>
+          <span className="section-eyebrow">Zero-Trust Node Security</span>
+          <h1 className="auth-title">Station Authentication</h1>
+          <p className="auth-subtitle">
+            Sign in with your registered station identity to access decentralized pharmaceutical logs.
+          </p>
         </div>
 
-        <form onSubmit={handleLogin} className="login-form">
-          <div className="input-row">
-            <label htmlFor="email">Node ID (Email)</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="e.g. admin@pharma.net"
-              required
-            />
-          </div>
-          <div className="input-row">
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <label htmlFor="password">Security Key (Password)</label>
-              <Link to="/forgot-password" style={{ fontSize: '0.8rem', color: 'var(--primary)' }}>Recover Key?</Link>
+        {/* Form */}
+        <form onSubmit={handleLogin} className="auth-form">
+          <div className="input-group">
+            <label htmlFor="email">Station Identity (Email)</label>
+            <div className="input-icon-wrap">
+              <FontAwesomeIcon icon={faEnvelope} className="input-inner-icon" />
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="e.g. pharmacist@hospital.net"
+                className="input-with-icon"
+                required
+              />
             </div>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
           </div>
 
-          <button type="submit" className="btn btn-primary" style={{ width: '100%', height: '48px', marginTop: '16px' }} disabled={loading}>
-            {loading ? 'Verifying Credentials...' : 'Authenticate'}
+          <div className="input-group">
+            <div className="label-flex-row">
+              <label htmlFor="password">Station Security Key</label>
+              <Link to="/forgot-password" className="forgot-link">Recover Key?</Link>
+            </div>
+            <div className="input-icon-wrap">
+              <FontAwesomeIcon icon={faLock} className="input-inner-icon" />
+              <input
+                type={showPassword ? 'text' : 'password'}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••••••"
+                className="input-with-icon input-with-toggle"
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => setShowPassword(!showPassword)}
+                title={showPassword ? 'Hide password' : 'Show password'}
+              >
+                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="btn btn-primary btn-lg auth-submit-btn"
+            disabled={loading}
+          >
+            <span>{loading ? 'Validating Node Signature...' : 'Establish Session'}</span>
+            <FontAwesomeIcon icon={faArrowRight} />
           </button>
         </form>
 
-        <div className="login-footer" style={{ textAlign: 'center', marginTop: '24px' }}>
-          <p style={{ color: 'var(--text-secondary)' }}>
-            New node cluster? <Link to="/register" style={{ color: 'var(--primary)', fontWeight: '600' }}>Register Station</Link>
+        {/* Footer */}
+        <div className="auth-footer">
+          <p className="auth-footer-text">
+            New node station in the network?{' '}
+            <Link to="/register" className="auth-footer-link">Register Station</Link>
           </p>
         </div>
       </div>

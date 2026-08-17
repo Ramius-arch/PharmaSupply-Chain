@@ -1,0 +1,6 @@
+/* ShippingForm.css */
+.shipping-form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

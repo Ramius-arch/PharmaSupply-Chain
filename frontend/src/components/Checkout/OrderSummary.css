@@ -1,0 +1,80 @@
+/* OrderSummary.css */
+.order-summary-box {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.order-summary-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.summary-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+}
+
+.summary-item-lead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.summary-item-name {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.summary-item-qty {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.summary-item-val {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.summary-cost-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cost-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.summary-total-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.total-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.total-val {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--accent-primary-hi);
+}

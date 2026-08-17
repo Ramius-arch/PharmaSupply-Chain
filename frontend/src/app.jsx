@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // Components
 import Sidebar from './components/Layout/Sidebar.jsx';
 import Header from './components/Layout/Header.jsx';
+import Footer from './components/Layout/Footer.jsx';
 import ProtectedRoute from './components/Layout/ProtectedRoute.jsx';
 import Home from './components/Home/Home.jsx';
 import Login from './components/Login/Login.jsx';
@@ -16,6 +17,7 @@ import Products from './pages/Product.jsx';
 import ProductDetails from './components/ProductDetails/ProductDetails.jsx';
 import Cart from './components/Cart/Cart.jsx';
 import Checkout from './components/Checkout/Checkout.jsx';
+import CheckoutSuccess from './components/Checkout/CheckoutSuccess.jsx';
 import AdminDashboard from './components/AdminDashboard/AdminDashboard.jsx';
 import Dashboard from './components/Dashboard/Dashboard.jsx';
 import MyOrders from './pages/MyOrders.jsx';
@@ -66,6 +68,7 @@ const App = () => {
                   {/* Protected routes — authenticated users only */}
                   <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
                   <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+                  <Route path="/checkout/success" element={<ProtectedRoute><CheckoutSuccess /></ProtectedRoute>} />
                   <Route path="/my-orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
                   <Route path="/generate-wallet" element={<ProtectedRoute><GenerateWallet /></ProtectedRoute>} />
                   <Route path="/blockchain-transaction" element={<ProtectedRoute><TransactionHistory /></ProtectedRoute>} />
@@ -75,7 +78,17 @@ const App = () => {
                   <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['admin', 'supplier']}><Dashboard /></ProtectedRoute>} />
                 </Routes>
               </main>
-              <ToastContainer />
+
+              <Footer />
+              <ToastContainer 
+                theme="dark"
+                position="bottom-right"
+                autoClose={4000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                pauseOnHover
+              />
             </div>
           </div>
         </CartProvider>
