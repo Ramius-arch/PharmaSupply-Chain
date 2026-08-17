@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -31,7 +31,7 @@ const MyOrders = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [copiedId, setCopiedId] = useState(null);
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     if (!token) return;
     try {
       setLoading(true);
@@ -44,11 +44,11 @@ const MyOrders = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchOrders();
-  }, [token]);
+  }, [fetchOrders]);
 
   const handleCopyOrderId = (id) => {
     navigator.clipboard.writeText(id);
