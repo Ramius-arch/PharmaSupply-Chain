@@ -1,8 +1,9 @@
 # Netlify Configuration for PharmaSupply Blockchain Frontend
 
 [build]
-  publish = "frontend/dist"
-  command = "npm install && npm run build --workspace=frontend"
+  base = "frontend"
+  publish = "dist"
+  command = "npm run build"
 
 [build.environment]
   NODE_VERSION = "18"
