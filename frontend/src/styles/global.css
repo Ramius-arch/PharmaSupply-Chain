@@ -60,11 +60,28 @@
   --glow-cyan:       0 0 24px rgba(0, 229, 255, 0.30);
   --glow-emerald:    0 0 24px rgba(0, 245, 160, 0.30);
 
-  /* ── Spacing Scale ────────────────────────────────────────── */
+  /* ── Spacing Scale (Static & Proportional) ─────────────── */
   --space-1: 4px;   --space-2: 8px;   --space-3: 12px;
   --space-4: 16px;  --space-5: 20px;  --space-6: 24px;
   --space-8: 32px;  --space-10: 40px; --space-12: 48px;
   --space-16: 64px; --space-20: 80px;
+
+  /* ── Fluid Proportional Spatial Tokens ───────────────────── */
+  --page-gutter:    clamp(1rem, 2.5vw, 3rem);
+  --section-gap:    clamp(2.25rem, 4.5vw, 5.5rem);
+  --card-padding:   clamp(1.2rem, 1.8vw, 2.25rem);
+  --grid-gap:       clamp(1rem, 1.6vw, 2rem);
+  --container-max:  min(94vw, 1560px);
+  --sidebar-width:  clamp(240px, 16vw, 290px);
+
+  /* ── Fluid Typography Scale ──────────────────────────────── */
+  --text-display-2xl: clamp(2.25rem, 3.8vw + 1rem, 4.25rem);
+  --text-display-xl:  clamp(1.75rem, 2.5vw + 0.6rem, 3rem);
+  --text-display-lg:  clamp(1.35rem, 1.5vw + 0.5rem, 2.25rem);
+  --text-display-md:  clamp(1.15rem, 1.1vw + 0.4rem, 1.6rem);
+  --text-base:        clamp(0.92rem, 0.25vw + 0.82rem, 1.05rem);
+  --text-sm:          clamp(0.8rem, 0.2vw + 0.72rem, 0.925rem);
+  --text-xs:          clamp(0.72rem, 0.15vw + 0.65rem, 0.8rem);
 
   /* ── Typography Systems ───────────────────────────────────── */
   --font-sans:    'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;

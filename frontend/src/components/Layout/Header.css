@@ -3,7 +3,7 @@
 ───────────────────────────────────────────────────────────── */
 
 .app-header {
-  height: 68px;
+  height: clamp(58px, 6vh, 68px);
   background: rgba(14, 20, 31, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -11,17 +11,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
+  padding: 0 var(--page-gutter);
   position: sticky;
   top: 0;
   z-index: 90;
-  transition: background-color var(--transition-base);
-}
-
-@media (min-width: 1024px) {
-  .app-header {
-    padding: 0 36px;
-  }
+  transition: background-color var(--transition-base), height var(--transition-base);
 }
 
 /* Header Left */

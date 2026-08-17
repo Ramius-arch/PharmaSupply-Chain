@@ -3,12 +3,13 @@
 ───────────────────────────────────────────────────────────── */
 
 .checkout-wrapper {
-  max-width: 1280px;
+  max-width: var(--container-max);
+  width: 100%;
   margin: 0 auto;
   padding-bottom: 64px;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: clamp(20px, 2.5vw, 36px);
 }
 
 .checkout-header {
@@ -18,26 +19,28 @@
 }
 
 .checkout-headline {
-  font-size: 2.2rem;
+  font-size: var(--text-display-xl);
   font-weight: 800;
   color: #FFFFFF;
+  line-height: 1.15;
 }
 
 .checkout-subtitle {
-  font-size: 0.95rem;
+  font-size: var(--text-base);
   color: var(--text-secondary);
 }
 
 .checkout-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 28px;
+  gap: var(--grid-gap);
+  width: 100%;
 }
 
 @media (min-width: 1024px) {
   .checkout-grid {
-    grid-template-columns: 1.5fr 1fr;
-    gap: 36px;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: clamp(24px, 3vw, 40px);
     align-items: start;
   }
 }
@@ -49,7 +52,7 @@
 }
 
 .checkout-section {
-  padding: 28px;
+  padding: var(--card-padding);
   display: flex;
   flex-direction: column;
   gap: 20px;

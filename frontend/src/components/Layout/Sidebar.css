@@ -3,7 +3,7 @@
 ───────────────────────────────────────────────────────────── */
 
 .modern-sidebar {
-  width: 280px;
+  width: var(--sidebar-width);
   background: linear-gradient(
     180deg,
     rgba(14, 20, 31, 0.96) 0%,
@@ -12,6 +12,7 @@
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   height: 100vh;
+  height: 100dvh;
   position: fixed;
   top: 0;
   left: 0;
@@ -20,7 +21,7 @@
   display: flex;
   flex-direction: column;
   z-index: 100;
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  transition: transform var(--transition-base), box-shadow var(--transition-base), width var(--transition-base);
 }
 
 /* Brand Section */
@@ -366,6 +367,7 @@
 /* Mobile Responsiveness */
 @media (max-width: 1024px) {
   .modern-sidebar {
+    width: min(84vw, 320px);
     transform: translateX(-100%);
   }
 
