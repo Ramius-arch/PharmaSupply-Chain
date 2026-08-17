@@ -37,3 +37,6 @@ web3/contract-address.json
 frontend/dist/
 frontend/build/
 errorlog.txt
+
+# Local Netlify folder
+.netlify
