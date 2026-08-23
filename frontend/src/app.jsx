@@ -26,6 +26,7 @@ import TransactionHistory from './components/Blockchain/TransactionHistory.jsx';
 import ForgotPassword from './components/ForgotPassword/ForgotPassword.jsx';
 
 import Breadcrumbs from './components/Layout/Breadcrumbs.jsx';
+import SmoothScroll from './components/UI/SmoothScroll.jsx';
 
 // Styles
 import './App.css';
@@ -38,9 +39,10 @@ const App = () => {
 
   return (
     <Router>
-      <AuthProvider>
-        <CartProvider>
-          <div className={`app-container ${sidebarOpen ? 'sidebar-open' : ''}`}>
+      <SmoothScroll>
+        <AuthProvider>
+          <CartProvider>
+            <div className={`app-container ${sidebarOpen ? 'sidebar-open' : ''}`}>
             <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
             {/* Mobile Overlay */}
@@ -93,7 +95,8 @@ const App = () => {
           </div>
         </CartProvider>
       </AuthProvider>
-    </Router>
+    </SmoothScroll>
+  </Router>
   );
 };
 export default App;
