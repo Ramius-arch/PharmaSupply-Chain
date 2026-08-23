@@ -10,6 +10,7 @@ import {
   faBuilding,
 } from '@fortawesome/free-solid-svg-icons';
 import { CartContext } from '../../context/CartContext';
+import { getProductImage } from '../../utils/productUtils';
 import { toast } from 'react-toastify';
 import './ProductCard.css';
 
@@ -21,7 +22,7 @@ const ProductCard = ({ product }) => {
     ? product.unitPrice 
     : (product.price > 100 ? product.price / 100 : product.price) || 0;
 
-  const imgUrl = product.image || `https://picsum.photos/seed/${product.id || 'pharma'}/600/450?grayscale`;
+  const imgUrl = getProductImage(product);
   const stock = product.quantityInStock !== undefined ? product.quantityInStock : 45;
 
   const handleQuickAdd = (e) => {
