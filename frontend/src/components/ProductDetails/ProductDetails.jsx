@@ -25,6 +25,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { CartContext } from '../../context/CartContext';
 import LoadingSpinner from '../UI/LoadingSpinner';
 import EmptyState from '../UI/EmptyState';
+import { getProductImage } from '../../utils/productUtils';
 import { toast } from 'react-toastify';
 import './ProductDetails.css';
 
@@ -156,7 +157,7 @@ const ProductDetails = () => {
 
   const priceVal = product.unitPrice !== undefined ? product.unitPrice : (product.price || 0);
   const stock = product.quantityInStock !== undefined ? product.quantityInStock : 45;
-  const imgUrl = product.image || `https://picsum.photos/seed/${id}/800/600?grayscale`;
+  const imgUrl = getProductImage(product);
 
   return (
     <div className="product-details-page container animate-fade-in">
