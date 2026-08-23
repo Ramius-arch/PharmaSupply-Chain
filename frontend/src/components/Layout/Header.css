@@ -124,6 +124,56 @@
   transform: scale(0.96);
 }
 
+/* Ambience Switcher Button */
+.header-ambience-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition: all var(--transition-fast);
+}
+
+.header-ambience-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+.header-ambience-btn:active {
+  transform: scale(0.96);
+}
+
+.header-ambience-btn.mode-warm {
+  background: rgba(255, 170, 51, 0.12);
+  border-color: rgba(255, 170, 51, 0.35);
+  color: #FFAA33;
+  box-shadow: 0 0 16px rgba(255, 170, 51, 0.15);
+}
+
+.header-ambience-btn.mode-cyber {
+  background: rgba(0, 245, 160, 0.12);
+  border-color: rgba(0, 245, 160, 0.35);
+  color: var(--accent-emerald);
+  box-shadow: 0 0 16px rgba(0, 245, 160, 0.15);
+}
+
+.header-ambience-btn.mode-obsidian {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--border-subtle);
+  color: var(--text-muted);
+}
+
+.ambience-icon {
+  font-size: 0.9rem;
+}
+
 /* Cart Button */
 .header-cart-btn {
   width: 40px;

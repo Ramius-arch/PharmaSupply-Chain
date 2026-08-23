@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { AmbienceProvider } from './context/AmbienceContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -9,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Sidebar from './components/Layout/Sidebar.jsx';
 import Header from './components/Layout/Header.jsx';
 import Footer from './components/Layout/Footer.jsx';
+import AmbientBackdrop from './components/Layout/AmbientBackdrop.jsx';
 import ProtectedRoute from './components/Layout/ProtectedRoute.jsx';
 import Home from './components/Home/Home.jsx';
 import Login from './components/Login/Login.jsx';
@@ -41,10 +43,12 @@ const App = () => {
   return (
     <Router>
       <SmoothScroll>
-        <AuthProvider>
-          <CartProvider>
-            <div className={`app-container ${sidebarOpen ? 'sidebar-open' : ''}`}>
-            <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
+        <AmbienceProvider>
+          <AuthProvider>
+            <CartProvider>
+              <div className={`app-container ${sidebarOpen ? 'sidebar-open' : ''}`}>
+                <AmbientBackdrop />
+                <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
             {/* Mobile Overlay */}
             {sidebarOpen && (
@@ -97,8 +101,9 @@ const App = () => {
           </div>
         </CartProvider>
       </AuthProvider>
-    </SmoothScroll>
-  </Router>
+    </AmbienceProvider>
+  </SmoothScroll>
+</Router>
   );
 };
 export default App;
