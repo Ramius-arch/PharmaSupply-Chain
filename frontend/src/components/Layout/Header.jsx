@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { CartContext } from '../../context/CartContext';
+import { AmbienceContext } from '../../context/AmbienceContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBars,
@@ -10,15 +11,31 @@ import {
   faSearch,
   faCube,
   faShieldHalved,
+  faSun,
+  faMoon,
+  faWandMagicSparkles,
 } from '@fortawesome/free-solid-svg-icons';
 import './Header.css';
 
 const Header = ({ onToggleSidebar }) => {
   const { user, isAuthenticated, logout } = useContext(AuthContext);
   const { cartItems } = useContext(CartContext);
+  const { ambientMode, cycleAmbience } = useContext(AmbienceContext);
   const navigate = useNavigate();
 
   const totalCartItems = cartItems?.reduce((acc, item) => acc + (item.quantity || 1), 0) || 0;
+
+  const getAmbienceLabel = () => {
+    if (ambientMode === 'warm') return 'Warm Nostalgic';
+    if (ambientMode === 'cyber') return 'Cyber Biolab';
+    return 'Deep Obsidian';
+  };
+
+  const getAmbienceIcon = () => {
+    if (ambientMode === 'warm') return faSun;
+    if (ambientMode === 'cyber') return faWandMagicSparkles;
+    return faMoon;
+  };
 
   return (
     <header className="app-header">
@@ -45,6 +62,18 @@ const Header = ({ onToggleSidebar }) => {
       </div>
 
       <div className="header-right">
+        {/* Ambience Lighting Mode Switcher */}
+        <button
+          type="button"
+          className={`header-ambience-btn mode-${ambientMode}`}
+          onClick={cycleAmbience}
+          title={`Switch lighting atmosphere (Current: ${getAmbienceLabel()})`}
+          aria-label="Toggle lighting atmosphere"
+        >
+          <FontAwesomeIcon icon={getAmbienceIcon()} className="ambience-icon" />
+          <span className="action-text hidden-mobile">{getAmbienceLabel()}</span>
+        </button>
+
         {/* Quick Search trigger */}
         <button 
           className="header-action-btn hidden-mobile" 
