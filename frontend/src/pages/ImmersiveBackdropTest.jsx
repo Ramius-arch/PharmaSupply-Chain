@@ -8,32 +8,38 @@ import {
   faShieldHalved, 
   faMicrochip, 
   faHeartPulse, 
-  faArrowRight 
+  faArrowRight,
+  faExpand
 } from '@fortawesome/free-solid-svg-icons';
+import backdropImage from '../assets/warm-nostalgic-backdrop.jpg';
 import './ImmersiveBackdropTest.css';
 
 const ImmersiveBackdropTest = () => {
-  const [opacity, setOpacity] = useState(0.45);
+  const [opacity, setOpacity] = useState(0.85);
   const [blurAmount, setBlurAmount] = useState(0);
-  const [blendMode, setBlendMode] = useState('soft-light');
+  const [blendMode, setBlendMode] = useState('normal');
   const [showGrain, setShowGrain] = useState(true);
-  const [vignetteIntensity, setVignetteIntensity] = useState(0.65);
+  const [vignetteIntensity, setVignetteIntensity] = useState(0.45);
   const [showCards, setShowCards] = useState(true);
+  const [fullBleed, setFullBleed] = useState(false);
 
   return (
-    <div className="immersive-test-stage">
+    <div className={`immersive-test-stage ${fullBleed ? 'full-bleed-mode' : ''}`}>
       {/* ── Immersive Background Image Layer ── */}
       <div 
         className="immersive-image-layer"
         style={{
+          backgroundImage: `url(${backdropImage})`,
           opacity: opacity,
           filter: blurAmount > 0 ? `blur(${blurAmount}px)` : 'none',
           mixBlendMode: blendMode,
         }}
       />
 
-      {/* ── Film Grain & Vignette Depth Overlay ── */}
+      {/* ── Film Grain Overlay ── */}
       {showGrain && <div className="immersive-grain-overlay" />}
+
+      {/* ── Vignette Depth Overlay ── */}
       <div 
         className="immersive-vignette-overlay" 
         style={{
@@ -106,7 +112,7 @@ const ImmersiveBackdropTest = () => {
               </div>
               <input 
                 type="range" 
-                min="0.2" 
+                min="0" 
                 max="0.95" 
                 step="0.05" 
                 value={vignetteIntensity} 
@@ -121,7 +127,7 @@ const ImmersiveBackdropTest = () => {
                 <label>Optical Blend Mode</label>
               </div>
               <div className="blend-pill-group">
-                {['soft-light', 'screen', 'overlay', 'normal'].map((mode) => (
+                {['normal', 'soft-light', 'screen', 'overlay'].map((mode) => (
                   <button
                     key={mode}
                     type="button"
@@ -150,6 +156,13 @@ const ImmersiveBackdropTest = () => {
               onClick={() => setShowCards(!showCards)}
             >
               <FontAwesomeIcon icon={faEye} /> UI Overlay: {showCards ? 'VISIBLE' : 'HIDDEN'}
+            </button>
+            <button 
+              type="button" 
+              className={`toggle-chip ${fullBleed ? 'active' : ''}`}
+              onClick={() => setFullBleed(!fullBleed)}
+            >
+              <FontAwesomeIcon icon={faExpand} /> {fullBleed ? 'Exit Full Screen' : 'Full Screen View'}
             </button>
           </div>
         </div>

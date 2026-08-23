@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { AmbienceContext } from '../../context/AmbienceContext';
+import backdropImage from '../../assets/warm-nostalgic-backdrop.jpg';
 import './AmbientBackdrop.css';
 
 const AmbientBackdrop = () => {
@@ -11,7 +12,10 @@ const AmbientBackdrop = () => {
       {ambientMode === 'warm' && (
         <div 
           className="ambient-warm-image-layer"
-          style={{ opacity: intensity }}
+          style={{ 
+            backgroundImage: `url(${backdropImage})`,
+            opacity: intensity 
+          }}
         />
       )}
 
