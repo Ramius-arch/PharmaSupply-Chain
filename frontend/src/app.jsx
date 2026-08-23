@@ -24,6 +24,7 @@ import MyOrders from './pages/MyOrders.jsx';
 import GenerateWallet from './components/GenerateWallet/GenerateWallet.jsx';
 import TransactionHistory from './components/Blockchain/TransactionHistory.jsx';
 import ForgotPassword from './components/ForgotPassword/ForgotPassword.jsx';
+import ImmersiveBackdropTest from './pages/ImmersiveBackdropTest.jsx';
 
 import Breadcrumbs from './components/Layout/Breadcrumbs.jsx';
 import SmoothScroll from './components/UI/SmoothScroll.jsx';
@@ -66,6 +67,7 @@ const App = () => {
                   <Route path="/forgot-password" element={<ForgotPassword />} />
                   <Route path="/products" element={<Products />} />
                   <Route path="/products/:id" element={<ProductDetails />} />
+                  <Route path="/test-backdrop" element={<ImmersiveBackdropTest />} />
 
                   {/* Protected routes — authenticated users only */}
                   <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
