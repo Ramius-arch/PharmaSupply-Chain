@@ -231,7 +231,12 @@
   align-items: center;
   justify-content: center;
   font-size: 0.9rem;
-  transition: all var(--transition-base);
+  transition: 
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    color var(--transition-base),
+    box-shadow var(--transition-base),
+    transform var(--transition-fast);
 }
 
 .progress-step.completed .step-circle {
