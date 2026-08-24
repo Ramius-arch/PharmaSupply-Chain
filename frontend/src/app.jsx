@@ -37,7 +37,8 @@ import './App.css';
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
-    return localStorage.getItem('pharma_sidebar_collapsed') === 'true';
+    const saved = sessionStorage.getItem('pharma_sidebar_collapsed');
+    return saved !== null ? saved === 'true' : true; // Default: collapsed (true)
   });
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
@@ -46,7 +47,7 @@ const App = () => {
   const toggleSidebarCollapsed = () => {
     setSidebarCollapsed((prev) => {
       const next = !prev;
-      localStorage.setItem('pharma_sidebar_collapsed', next.toString());
+      sessionStorage.setItem('pharma_sidebar_collapsed', next.toString());
       return next;
     });
   };
