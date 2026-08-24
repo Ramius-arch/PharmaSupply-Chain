@@ -39,13 +39,22 @@ exports.getBlockchainItemHistory = catchAsync(async (req, res, next) => {
     res.status(200).json({ data: history });
 });
 
-// New controller to get all blockchain transactions (events)
+// Get all blockchain transactions (events) with graceful fallback
 exports.getTransactions = catchAsync(async (req, res) => {
-  const transactions = await blockchainService.getBlockchainTransactions();
-  res.status(200).json({
-    status: 'success',
-    results: transactions.length,
-    data: transactions,
-  });
+  try {
+    const transactions = await blockchainService.getBlockchainTransactions();
+    res.status(200).json({
+      status: 'success',
+      results: transactions.length,
+      data: transactions,
+    });
+  } catch (error) {
+    console.warn('RPC node query fallback:', error.message);
+    res.status(200).json({
+      status: 'success',
+      results: 0,
+      data: [],
+    });
+  }
 });
 
