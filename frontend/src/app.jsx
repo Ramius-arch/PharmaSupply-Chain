@@ -36,9 +36,32 @@ import './App.css';
 
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    return localStorage.getItem('pharma_sidebar_collapsed') === 'true';
+  });
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const closeSidebar = () => setSidebarOpen(false);
+
+  const toggleSidebarCollapsed = () => {
+    setSidebarCollapsed((prev) => {
+      const next = !prev;
+      localStorage.setItem('pharma_sidebar_collapsed', next.toString());
+      return next;
+    });
+  };
+
+  // Emil Kowalski shortcut: Cmd+B / Ctrl+B toggle sidebar
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+        e.preventDefault();
+        toggleSidebarCollapsed();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
     <Router>
@@ -46,9 +69,14 @@ const App = () => {
         <AmbienceProvider>
           <AuthProvider>
             <CartProvider>
-              <div className={`app-container ${sidebarOpen ? 'sidebar-open' : ''}`}>
+              <div className={`app-container ${sidebarOpen ? 'sidebar-open' : ''} ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
                 <AmbientBackdrop />
-                <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
+                <Sidebar 
+                  isOpen={sidebarOpen} 
+                  isCollapsed={sidebarCollapsed}
+                  onToggleCollapse={toggleSidebarCollapsed}
+                  onClose={closeSidebar} 
+                />
 
             {/* Mobile Overlay */}
             {sidebarOpen && (
@@ -56,7 +84,7 @@ const App = () => {
             )}
 
             <div className="main-content">
-              <Header onToggleSidebar={toggleSidebar} />
+              <Header onToggleSidebar={toggleSidebar} isSidebarCollapsed={sidebarCollapsed} onToggleCollapse={toggleSidebarCollapsed} />
 
               <div className="desktop-breadcrumb-wrap">
                 <Breadcrumbs />

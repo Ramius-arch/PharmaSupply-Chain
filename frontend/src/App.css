@@ -20,7 +20,7 @@
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  transition: margin var(--transition-base), transform var(--transition-base);
+  transition: margin var(--transition-drawer);
   position: relative;
   z-index: 1;
 }
