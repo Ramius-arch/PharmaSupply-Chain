@@ -187,12 +187,22 @@
   font-size: 0.72rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: 
+    background-color 150ms var(--ease-out),
+    border-color 150ms var(--ease-out),
+    color 150ms var(--ease-out),
+    box-shadow 150ms var(--ease-out),
+    transform 150ms var(--ease-out);
 }
 
 .blend-btn:hover {
   background: rgba(255, 255, 255, 0.12);
   color: #FFFFFF;
+}
+
+.blend-btn:active {
+  transform: scale(0.96);
+  transition: transform 60ms var(--ease-out);
 }
 
 .blend-btn.active {
@@ -222,12 +232,21 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  transition: all var(--transition-fast);
+  transition: 
+    background-color 150ms var(--ease-out),
+    border-color 150ms var(--ease-out),
+    color 150ms var(--ease-out),
+    transform 150ms var(--ease-out);
 }
 
 .toggle-chip:hover {
   background: rgba(255, 255, 255, 0.1);
   color: #FFFFFF;
+}
+
+.toggle-chip:active {
+  transform: scale(0.96);
+  transition: transform 60ms var(--ease-out);
 }
 
 .toggle-chip.active {
