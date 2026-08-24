@@ -17,13 +17,14 @@ import {
   faTimes,
   faChevronLeft,
   faChevronRight,
+  faRotateRight,
 } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '../../context/AuthContext';
 import { CartContext } from '../../context/CartContext';
 import './Sidebar.css';
 
 const Sidebar = ({ isOpen, isCollapsed, onToggleCollapse, onClose }) => {
-  const { user, isAuthenticated, logout } = useContext(AuthContext);
+  const { user, isAuthenticated, logout, isGuestDemo, resetDemoSession } = useContext(AuthContext);
   const { cartItems } = useContext(CartContext);
   const location = useLocation();
   const [blockHeight, setBlockHeight] = useState(1984201);
@@ -127,39 +128,35 @@ const Sidebar = ({ isOpen, isCollapsed, onToggleCollapse, onClose }) => {
           </ul>
         </div>
 
-        {isAuthenticated && (
-          <div className="nav-section-group">
-            <span className="nav-group-title">Supply Chain Ops</span>
-            <ul className="nav-item-list">
-              <NavItem to="/cart" icon={faShoppingCart} label="Shipment Cart" badge={totalCartCount} />
-              <NavItem to="/my-orders" icon={faBoxOpen} label="My Shipments" />
-              <NavItem to="/blockchain-transaction" icon={faLink} label="Ledger Explorer" />
-              <NavItem to="/generate-wallet" icon={faKey} label="Node Key Vault" />
-            </ul>
-          </div>
-        )}
+        <div className="nav-section-group">
+          <span className="nav-group-title">Supply Chain Ops</span>
+          <ul className="nav-item-list">
+            <NavItem to="/cart" icon={faShoppingCart} label="Shipment Cart" badge={totalCartCount} />
+            <NavItem to="/my-orders" icon={faBoxOpen} label="My Shipments" />
+            <NavItem to="/blockchain-transaction" icon={faLink} label="Ledger Explorer" />
+            <NavItem to="/generate-wallet" icon={faKey} label="Node Key Vault" />
+          </ul>
+        </div>
 
-        {isAuthenticated && (user?.role === 'admin' || user?.role === 'supplier') && (
-          <div className="nav-section-group">
-            <span className="nav-group-title">Station Governance</span>
-            <ul className="nav-item-list">
-              <li>
-                <NavLink
-                  to="/admin"
-                  className={({ isActive }) => `sidebar-nav-item ${isActive || isAdminRoute ? 'active' : ''}`}
-                  onClick={handleLinkClick}
-                  title={isCollapsed ? "Admin Control Center" : undefined}
-                >
-                  <div className="nav-item-icon-wrapper admin-icon">
-                    <FontAwesomeIcon icon={faShieldAlt} className="nav-icon" />
-                  </div>
-                  <span className="nav-item-label">Admin Control Center</span>
-                  <span className="admin-status-tag">PRO</span>
-                </NavLink>
-              </li>
-            </ul>
-          </div>
-        )}
+        <div className="nav-section-group">
+          <span className="nav-group-title">Station Governance</span>
+          <ul className="nav-item-list">
+            <li>
+              <NavLink
+                to="/admin"
+                className={({ isActive }) => `sidebar-nav-item ${isActive || isAdminRoute ? 'active' : ''}`}
+                onClick={handleLinkClick}
+                title={isCollapsed ? "Admin Control Center" : undefined}
+              >
+                <div className="nav-item-icon-wrapper admin-icon">
+                  <FontAwesomeIcon icon={faShieldAlt} className="nav-icon" />
+                </div>
+                <span className="nav-item-label">Admin Control Center</span>
+                <span className="admin-status-tag">DEMO</span>
+              </NavLink>
+            </li>
+          </ul>
+        </div>
 
         {!isAuthenticated && (
           <div className="nav-section-group">
@@ -174,20 +171,31 @@ const Sidebar = ({ isOpen, isCollapsed, onToggleCollapse, onClose }) => {
 
       {/* Sidebar Footer / User Profile */}
       <div className="sidebar-bottom-panel">
-        {isAuthenticated ? (
-          <div className="user-profile-card">
-            <div className="user-card-header">
-              <div className="user-avatar-circle" title={`${user?.firstName} ${user?.lastName} (${user?.role})`}>
-                {user?.firstName?.charAt(0) || 'U'}
-              </div>
-              <div className="user-card-info">
-                <span className="user-display-name">{user?.firstName} {user?.lastName}</span>
-                <span className="user-role-badge status-chip success">
-                  <FontAwesomeIcon icon={faCircleCheck} style={{ fontSize: '0.65rem' }} />
-                  {user?.role || 'NODE'}
-                </span>
-              </div>
+        <div className="user-profile-card">
+          <div className="user-card-header">
+            <div className="user-avatar-circle" title={`${user?.firstName} ${user?.lastName} (${isGuestDemo ? 'Demo Operator' : user?.role})`}>
+              {user?.firstName?.charAt(0) || 'D'}
             </div>
+            <div className="user-card-info">
+              <span className="user-display-name">{user?.firstName} {user?.lastName}</span>
+              <span className="user-role-badge status-chip success">
+                <FontAwesomeIcon icon={faCircleCheck} style={{ fontSize: '0.65rem' }} />
+                {isGuestDemo ? 'DEMO ACCESS' : user?.role || 'NODE'}
+              </span>
+            </div>
+          </div>
+          
+          {isGuestDemo ? (
+            <button
+              onClick={resetDemoSession}
+              className="btn btn-outline btn-sm user-signout-btn"
+              title="Reset demonstrative session to defaults"
+              aria-label="Reset session defaults"
+            >
+              <FontAwesomeIcon icon={faRotateRight} />
+              <span className="signout-text">Reset Session</span>
+            </button>
+          ) : (
             <button
               onClick={() => { logout(); handleLinkClick(); }}
               className="btn btn-outline btn-sm user-signout-btn"
@@ -197,18 +205,8 @@ const Sidebar = ({ isOpen, isCollapsed, onToggleCollapse, onClose }) => {
               <FontAwesomeIcon icon={faSignOutAlt} />
               <span className="signout-text">Exit Session</span>
             </button>
-          </div>
-        ) : (
-          <div className="guest-node-banner" title="Guest Node (Read-only telemetry)">
-            <div className="guest-node-icon">
-              <FontAwesomeIcon icon={faSignInAlt} />
-            </div>
-            <div className="guest-node-text">
-              <strong>Guest Node</strong>
-              <span>Read-only telemetry</span>
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </aside>
   );
