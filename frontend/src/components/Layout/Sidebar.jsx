@@ -15,13 +15,14 @@ import {
   faCube,
   faCircleCheck,
   faTimes,
-  faChartLine,
+  faChevronLeft,
+  faChevronRight,
 } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '../../context/AuthContext';
 import { CartContext } from '../../context/CartContext';
 import './Sidebar.css';
 
-const Sidebar = ({ isOpen, onClose }) => {
+const Sidebar = ({ isOpen, isCollapsed, onToggleCollapse, onClose }) => {
   const { user, isAuthenticated, logout } = useContext(AuthContext);
   const { cartItems } = useContext(CartContext);
   const location = useLocation();
@@ -52,12 +53,16 @@ const Sidebar = ({ isOpen, onClose }) => {
         end={end}
         className={({ isActive }) => `sidebar-nav-item ${isActive ? 'active' : ''}`}
         onClick={handleLinkClick}
+        title={isCollapsed ? label : undefined}
       >
         <div className="nav-item-icon-wrapper">
           <FontAwesomeIcon icon={icon} className="nav-icon" />
+          {isCollapsed && badge !== null && badge > 0 && (
+            <span className="rail-badge-dot">{badge}</span>
+          )}
         </div>
         <span className="nav-item-label">{label}</span>
-        {badge !== null && badge > 0 && (
+        {!isCollapsed && badge !== null && badge > 0 && (
           <span className="nav-item-badge">{badge}</span>
         )}
       </NavLink>
@@ -65,11 +70,14 @@ const Sidebar = ({ isOpen, onClose }) => {
   );
 
   return (
-    <aside className={`modern-sidebar ${isOpen ? 'open' : ''}`} aria-label="Main Navigation">
+    <aside 
+      className={`modern-sidebar ${isOpen ? 'open' : ''} ${isCollapsed ? 'collapsed' : ''}`} 
+      aria-label="Main Navigation"
+    >
       {/* Brand Header */}
       <div className="sidebar-brand-section">
         <div className="brand-header-flex">
-          <NavLink to="/" className="brand-logo-container" onClick={handleLinkClick}>
+          <NavLink to="/" className="brand-logo-container" onClick={handleLinkClick} title="PharmaSupply Platform">
             <div className="brand-icon-box">
               <FontAwesomeIcon icon={faCube} className="brand-cube-icon" />
             </div>
@@ -79,6 +87,18 @@ const Sidebar = ({ isOpen, onClose }) => {
             </div>
           </NavLink>
 
+          {/* Desktop Collapse Toggle Button (Emil Kowalski Tactile Spring) */}
+          <button 
+            type="button"
+            className="sidebar-collapse-btn hidden-mobile" 
+            onClick={onToggleCollapse} 
+            title={isCollapsed ? "Expand sidebar (Ctrl+B)" : "Collapse sidebar (Ctrl+B)"}
+            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            <FontAwesomeIcon icon={isCollapsed ? faChevronRight : faChevronLeft} className="collapse-icon" />
+          </button>
+
+          {/* Mobile Close Button */}
           <button className="sidebar-close-btn" onClick={onClose} aria-label="Close sidebar">
             <FontAwesomeIcon icon={faTimes} />
           </button>
@@ -88,10 +108,10 @@ const Sidebar = ({ isOpen, onClose }) => {
         <div className="network-pill-card">
           <div className="network-status-line">
             <span className="pulse-dot success"></span>
-            <span className="network-name">Sepolia Testnet #8545</span>
+            <span className="network-name">Sepolia Testnet</span>
           </div>
           <div className="network-sub-stats">
-            <span className="network-latency">24ms Ping</span>
+            <span className="network-latency">24ms</span>
             <span className="network-block mono-text">#{blockHeight}</span>
           </div>
         </div>
@@ -128,6 +148,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                   to="/admin"
                   className={({ isActive }) => `sidebar-nav-item ${isActive || isAdminRoute ? 'active' : ''}`}
                   onClick={handleLinkClick}
+                  title={isCollapsed ? "Admin Control Center" : undefined}
                 >
                   <div className="nav-item-icon-wrapper admin-icon">
                     <FontAwesomeIcon icon={faShieldAlt} className="nav-icon" />
@@ -156,7 +177,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         {isAuthenticated ? (
           <div className="user-profile-card">
             <div className="user-card-header">
-              <div className="user-avatar-circle">
+              <div className="user-avatar-circle" title={`${user?.firstName} ${user?.lastName} (${user?.role})`}>
                 {user?.firstName?.charAt(0) || 'U'}
               </div>
               <div className="user-card-info">
@@ -170,14 +191,15 @@ const Sidebar = ({ isOpen, onClose }) => {
             <button
               onClick={() => { logout(); handleLinkClick(); }}
               className="btn btn-outline btn-sm user-signout-btn"
+              title="Exit current session"
               aria-label="Exit current session"
             >
               <FontAwesomeIcon icon={faSignOutAlt} />
-              <span>Exit Session</span>
+              <span className="signout-text">Exit Session</span>
             </button>
           </div>
         ) : (
-          <div className="guest-node-banner">
+          <div className="guest-node-banner" title="Guest Node (Read-only telemetry)">
             <div className="guest-node-icon">
               <FontAwesomeIcon icon={faSignInAlt} />
             </div>

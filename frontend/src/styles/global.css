@@ -72,7 +72,9 @@
   --card-padding:   clamp(1.2rem, 1.8vw, 2.25rem);
   --grid-gap:       clamp(1rem, 1.6vw, 2rem);
   --container-max:  min(94vw, 1560px);
-  --sidebar-width:  clamp(240px, 16vw, 290px);
+  --sidebar-width-expanded: 260px;
+  --sidebar-width-collapsed: 74px;
+  --sidebar-width:  var(--sidebar-width-expanded);
 
   /* ── Fluid Typography Scale ──────────────────────────────── */
   --text-display-2xl: clamp(2.25rem, 3.8vw + 1rem, 4.25rem);
@@ -100,6 +102,7 @@
   --ease-out:    cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 
   --duration-fast: 160ms;
   --duration-base: 240ms;
@@ -107,6 +110,11 @@
 
   --transition-fast: var(--duration-fast) var(--ease-out);
   --transition-base: var(--duration-base) var(--ease-out);
+  --transition-drawer: var(--duration-base) var(--ease-drawer);
+}
+
+.app-container.sidebar-collapsed {
+  --sidebar-width: var(--sidebar-width-collapsed);
 }
 
 /* ─────────────────────────────────────────────────────────────
